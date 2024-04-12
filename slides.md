@@ -210,6 +210,27 @@ Goals:
   - Avoid displaying an old page with new data
 
 ---
+
+# Data Loaders
+
+```vue{*|1,12|4-9|13}
+<script lang="ts">
+import { getUserById } from '../api'
+
+export const useUserData = defineLoader(async (route) => {
+  const user = await getUserById(route.params.id)
+  // ...
+  // return anything you want to expose
+  return user
+})
+</script>
+
+<script lang="ts" setup>
+const { data: user, isLoading, error, reload } = useUserData()
+</script>
+```
+
+---
 layout: cover
 ---
 
