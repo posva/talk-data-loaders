@@ -57,17 +57,21 @@ const { data: searchResults, isLoading, error } = useArtworksSearchResults()
 
 const images = shallowReactive(new Map<number, string | null>())
 
-watch(searchResults, (results) => {
-  for (const artwork of results.data) {
-    getArtworkImageURL(artwork.id).then((url) => {
-      images.set(artwork.id, url)
-    })
-  }
-}, { immediate: true })
+watch(
+  searchResults,
+  (results) => {
+    for (const artwork of results.data) {
+      getArtworkImageURL(artwork.id).then((url) => {
+        images.set(artwork.id, url)
+      })
+    }
+  },
+  { immediate: true },
+)
 
 function submitSearch() {
   searchQuery.value = searchText.value
-currentPage.value = 1
+  currentPage.value = 1
 }
 </script>
 
@@ -98,7 +102,11 @@ currentPage.value = 1
         :title="artwork.title"
       >
         <div class="loader item__content" v-if="artwork.thumbnail">
-          <object v-if="images?.get(artwork.id)" :data="images.get(artwork.id)!" type="image/jpg"></object>
+          <object
+            v-if="images?.get(artwork.id)"
+            :data="images.get(artwork.id)!"
+            type="image/jpg"
+          ></object>
           <img
             class="frozen"
             :src="artwork.thumbnail.lqip"
