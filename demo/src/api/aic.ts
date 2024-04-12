@@ -1,14 +1,17 @@
 import { mande } from 'mande'
+import type { LocationQueryValueRaw } from 'vue-router/auto'
 
 const artworks = mande('https://api.artic.edu/api/v1/artworks')
 
-export function getArtworksList({
-  page,
-  limit = 25,
-}: {
+export interface PaginationParams {
   page?: number
   limit?: number
-} = {}) {
+}
+
+export function getArtworksList({
+  page = 1,
+  limit = 25,
+}: PaginationParams = {}) {
   return artworks
     .get<APIResponsePaginated<Artwork[]>>('/', {
       query: { page, limit },
@@ -24,13 +27,30 @@ export function getArtworksList({
     }))
 }
 
+export function getArtworkImageURL(artworkId: number) {
+  return artworks.get<APIResponse<Pick<Artwork, 'image_id'>>>(artworkId, {
+    query: {
+      fields: ['image_id']
+    }
+  }).then((response) =>
+    response.data.image_id
+      ? generateImageURL(response.config.iiif_url, response.data.image_id)
+      : null
+  )
+}
+
 export function getArtwork(id: number) {
   return artworks.get<APIResponse<Artwork>>(id)
 }
 
-export function searchArtworks(query: string) {
+export function searchArtworks(query: string | LocationQueryValueRaw, {
+  page = 1,
+  limit = 5,
+}: PaginationParams = {}) {
+  // NOTE: the API seems to work without a query
+  // if (typeof query !== 'string' || !query) return Promise.resolve({ data: [] })
   return artworks.get<APIResponsePaginated<ArtworkSearchResult[]>>('/search', {
-    query: { q: query },
+    query: { q: query, page, limit },
   })
 }
 
@@ -210,7 +230,7 @@ export interface ArtworkSearchThumbnail {
 
 export interface ArtworkSearchResult {
   _score: number
-  thumbnail: ArtworkSearchThumbnail
+  thumbnail: ArtworkSearchThumbnail | null
   api_model: string
   is_boosted: boolean
   api_link: string

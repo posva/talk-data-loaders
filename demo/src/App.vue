@@ -3,6 +3,7 @@
 
 <template>
   <header>
+    <h1>Art Collection</h1>
     <div class="wrapper">
       <nav>
         <RouterLink to="/">Home</RouterLink>

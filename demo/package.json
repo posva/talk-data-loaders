@@ -12,6 +12,7 @@
   },
   "dependencies": {
     "@pinia/colada": "^0.6.0",
+    "@vueuse/core": "^10.9.0",
     "mande": "^2.0.8",
     "pinia": "^2.1.7",
     "unplugin-vue-router": "^0.8.5",
