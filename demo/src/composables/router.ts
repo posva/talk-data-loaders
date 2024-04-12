@@ -10,7 +10,7 @@ import {
 export let pendingQuery: null | undefined | LocationQueryRaw
 
 export function useRouteQuery<
-  T extends LocationQueryValueRaw | LocationQueryValueRaw[] = string
+  T extends LocationQueryValueRaw | LocationQueryValueRaw[] = string,
 >(
   name: string,
   {
@@ -19,7 +19,7 @@ export function useRouteQuery<
     format = (v: LocationQueryValueRaw | LocationQueryValueRaw[]): T => v || '',
     // delete them from the query if they are falsy by default
     deleteIf = (v: T | undefined | null) => !v,
-  } = {}
+  } = {},
 ) {
   const $route = useRoute()
   const $router = useRouter()
