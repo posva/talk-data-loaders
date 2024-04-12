@@ -3,7 +3,15 @@ import { mande } from 'mande'
 const artworks = mande('https://api.artic.edu/api/v1/artworks')
 
 export function getArtworksList() {
-  return artworks.get<APIResponsePaginated<Artwork[]>>('/')
+  return artworks
+    .get<APIResponsePaginated<Artwork[]>>('/')
+    .then((response) => ({
+      ...response,
+      data: response.data.map((artwork) => ({
+        ...artwork,
+        image_url: generateImageURL(response.config.iiif_url, artwork.image_id),
+      })),
+    }))
 }
 
 export function getArtwork(id: number) {
@@ -16,23 +24,27 @@ export function searchArtworks(query: string) {
   })
 }
 
-interface APIResponse<Data> {
+function generateImageURL(iiif_url: string, image_id: string) {
+  return `${iiif_url}/${image_id}/full/843,/0/default.jpg`
+}
+
+export interface APIResponse<Data> {
   data: Data
   info: LicenseInfo
   config: Config
 }
-interface APIResponsePaginated<Data> extends APIResponse<Data> {
+export interface APIResponsePaginated<Data> extends APIResponse<Data> {
   pagination: Pagination
 }
 
-interface ArtworkThumbnail {
+export interface ArtworkThumbnail {
   lqip: string
   width: number
   height: number
   alt_text: string
 }
 
-interface ArtworkDimensionDetail {
+export interface ArtworkDimensionDetail {
   depth: number | null
   width: number
   height: number
@@ -40,7 +52,7 @@ interface ArtworkDimensionDetail {
   clarification: string | null
 }
 
-interface ArtworkColor {
+export interface ArtworkColor {
   h: number
   l: number
   s: number
@@ -48,7 +60,7 @@ interface ArtworkColor {
   population: number
 }
 
-interface ArtworkAutocompleteInput {
+export interface ArtworkAutocompleteInput {
   input: string[]
   weight?: number
   contexts: {
@@ -56,7 +68,7 @@ interface ArtworkAutocompleteInput {
   }
 }
 
-interface Artwork {
+export interface Artwork {
   id: number
   api_model: string
   api_link: string
@@ -143,6 +155,7 @@ interface Artwork {
   technique_titles: string[]
   theme_titles: string[]
   image_id: string
+  image_url: string
   alt_image_ids: any[]
   document_ids: any[]
   sound_ids: any[]
@@ -158,7 +171,7 @@ interface Artwork {
   timestamp: string
 }
 
-interface Pagination {
+export interface Pagination {
   total: number
   limit: number
   offset: number
@@ -167,25 +180,25 @@ interface Pagination {
   next_url: string
 }
 
-interface LicenseInfo {
+export interface LicenseInfo {
   license_text: string
   license_links: string[]
   version: string
 }
 
-interface Config {
+export interface Config {
   iiif_url: string
   website_url: string
 }
 
-interface ArtworkSearchThumbnail {
+export interface ArtworkSearchThumbnail {
   alt_text: string
   width: number
   lqip: string
   height: number
 }
 
-interface ArtworkSearchResult {
+export interface ArtworkSearchResult {
   _score: number
   thumbnail: ArtworkSearchThumbnail
   api_model: string
