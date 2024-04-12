@@ -1,13 +1,26 @@
 <script lang="ts">
 import { defineBasicLoader } from 'unplugin-vue-router/data-loaders/basic'
+import { getArtworksList } from '@/api/aic'
 
 export const useArtworksList = defineBasicLoader('/', async (to) => {
-  return getArtworksList()
+  let page = Number(to.query.page)
+  if (!Number.isFinite(page) || page < 1) page = 1
+  return getArtworksList({ page })
 })
 </script>
 
 <script setup lang="ts">
-import { getArtworksList } from '@/api/aic'
+import { useRouteQuery } from '@/composables/router'
+import AppPagination from '@/components/AppPagination.vue'
+
+const currentPage = useRouteQuery<number>('page', {
+  format: (v) => {
+    const n = Number(v)
+    return Number.isFinite(n) && n > 0 ? n : 1
+  },
+  // deleteIf: (v) => !v || v === 1,
+})
+
 const { data: artworksList, isLoading, error } = useArtworksList()
 </script>
 
@@ -15,31 +28,43 @@ const { data: artworksList, isLoading, error } = useArtworksList()
   <main>
     <h1>Museum Artworks List</h1>
 
-    <p>This list is provided by  <a href="https://www.artic.edu/">The Art Institute of Chicago</a>.
-
+    <p>
+      This list is provided by
+      <a href="https://www.artic.edu/">The Art Institute of Chicago</a>.
     </p>
 
     <p v-if="isLoading">Loading...</p>
     <blockquote v-else-if="error">{{ error }}</blockquote>
-    <section class="masonry" v-else-if="artworksList">
-      <figure
-        v-for="artwork in artworksList.data"
-        :id="`${artwork.title}_${artwork.id}`"
-        :key="artwork.id"
-        class="item"
-        :title="artwork.title"
-      >
-        <img
-          class="item__content"
-          :src="artwork.image_url"
-          :alt="artwork.thumbnail.alt_text"
-        />
-        <figcaption>
-          <a :href="`#${artwork.title}_${artwork.id}`">
-            {{ artwork.title }}
-          </a>
-        </figcaption>
-      </figure>
+
+    <section v-else-if="artworksList">
+      <AppPagination
+        v-model:current-page="currentPage"
+        :total="artworksList.pagination.total"
+        :per-page="artworksList.pagination.limit"
+      />
+
+      <br />
+
+      <div class="masonry">
+        <figure
+          v-for="artwork in artworksList.data"
+          :id="`${artwork.title}_${artwork.id}`"
+          :key="artwork.id"
+          class="item"
+          :title="artwork.title"
+        >
+          <img
+            class="item__content"
+            :src="artwork.image_url ?? artwork.thumbnail?.lqip"
+            :alt="artwork.thumbnail?.alt_text || artwork.title || '???'"
+          />
+          <figcaption>
+            <a :href="`#${artwork.title}_${artwork.id}`">
+              {{ artwork.title }} - {{ artwork.artist_title }}
+            </a>
+          </figcaption>
+        </figure>
+      </div>
     </section>
   </main>
 </template>

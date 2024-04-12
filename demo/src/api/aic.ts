@@ -2,14 +2,24 @@ import { mande } from 'mande'
 
 const artworks = mande('https://api.artic.edu/api/v1/artworks')
 
-export function getArtworksList() {
+export function getArtworksList({
+  page,
+  limit = 25,
+}: {
+  page?: number
+  limit?: number
+} = {}) {
   return artworks
-    .get<APIResponsePaginated<Artwork[]>>('/')
+    .get<APIResponsePaginated<Artwork[]>>('/', {
+      query: { page, limit },
+    })
     .then((response) => ({
       ...response,
       data: response.data.map((artwork) => ({
         ...artwork,
-        image_url: generateImageURL(response.config.iiif_url, artwork.image_id),
+        image_url:
+          artwork.image_id &&
+          generateImageURL(response.config.iiif_url, artwork.image_id),
       })),
     }))
 }
@@ -75,7 +85,7 @@ export interface Artwork {
   is_boosted: boolean
   title: string
   alt_titles: null
-  thumbnail: ArtworkThumbnail
+  thumbnail?: ArtworkThumbnail
   main_reference_number: string
   has_not_been_viewed_much: boolean
   boost_rank: null
@@ -154,8 +164,8 @@ export interface Artwork {
   technique_ids: string[]
   technique_titles: string[]
   theme_titles: string[]
-  image_id: string
-  image_url: string
+  image_id: string | null
+  image_url: string | null
   alt_image_ids: any[]
   document_ids: any[]
   sound_ids: any[]
