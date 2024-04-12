@@ -1,11 +1,19 @@
 <script lang="ts">
 import { defineBasicLoader } from 'unplugin-vue-router/data-loaders/basic'
 import { getArtworksList } from '@/api/aic'
+import { parsePageQuery } from '@/utils'
+import { defineColadaLoader } from 'unplugin-vue-router/data-loaders/pinia-colada'
 
-export const useArtworksList = defineBasicLoader('/', async (to) => {
-  let page = Number(to.query.page)
-  if (!Number.isFinite(page) || page < 1) page = 1
-  return getArtworksList({ page })
+// export const useArtworksList = defineBasicLoader('/', async (to) => {
+//   return getArtworksList({ page: parsePageQuery(to.query.page) })
+// })
+
+export const useArtworksList = defineColadaLoader('/', {
+  key: (to) => ['artworks', { page: parsePageQuery(to.query.page) }],
+  query: async (to) => {
+    return getArtworksList({ page: parsePageQuery(to.query.page) })
+  },
+  staleTime: 1000 * 60 * 60, // 1 hour
 })
 </script>
 
@@ -33,10 +41,7 @@ const { data: artworksList, isLoading, error } = useArtworksList()
       <a href="https://www.artic.edu/">The Art Institute of Chicago</a>.
     </p>
 
-    <p v-if="isLoading">Loading...</p>
-    <blockquote v-else-if="error">{{ error }}</blockquote>
-
-    <section v-else-if="artworksList">
+    <section>
       <AppPagination
         v-model:current-page="currentPage"
         :total="artworksList.pagination.total"
@@ -45,7 +50,12 @@ const { data: artworksList, isLoading, error } = useArtworksList()
 
       <br />
 
-      <div class="masonry">
+      <p v-if="isLoading">Loading...</p>
+      <blockquote v-else-if="error">{{ error }}</blockquote>
+
+      <br />
+
+      <div class="masonry" v-if="artworksList">
         <figure
           v-for="artwork in artworksList.data"
           :id="`${artwork.title}_${artwork.id}`"

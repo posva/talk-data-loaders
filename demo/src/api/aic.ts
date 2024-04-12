@@ -27,26 +27,32 @@ export function getArtworksList({
     }))
 }
 
-export function getArtworkImageURL(artworkId: number) {
-  return artworks.get<APIResponse<Pick<Artwork, 'image_id'>>>(artworkId, {
-    query: {
-      fields: ['image_id']
-    }
-  }).then((response) =>
-    response.data.image_id
-      ? generateImageURL(response.config.iiif_url, response.data.image_id)
-      : null
-  )
+export function getArtworkImagesURL(artworksId: number[]) {
+  return artworks
+    .get<APIResponse<Pick<Artwork, 'image_id' | 'id'>[]>>('/', {
+      query: {
+        ids: artworksId.join(','),
+        fields: 'id,image_id',
+      },
+    })
+    .then((response) =>
+      response.data.map((artwork) => ({
+        ...artwork,
+        image_url: artwork.image_id
+          ? generateImageURL(response.config.iiif_url, artwork.image_id)
+          : null,
+      })),
+    )
 }
 
 export function getArtwork(id: number) {
   return artworks.get<APIResponse<Artwork>>(id)
 }
 
-export function searchArtworks(query: string | LocationQueryValueRaw, {
-  page = 1,
-  limit = 5,
-}: PaginationParams = {}) {
+export function searchArtworks(
+  query: string | LocationQueryValueRaw,
+  { page = 1, limit = 5 }: PaginationParams = {},
+) {
   // NOTE: the API seems to work without a query
   // if (typeof query !== 'string' || !query) return Promise.resolve({ data: [] })
   return artworks.get<APIResponsePaginated<ArtworkSearchResult[]>>('/search', {
