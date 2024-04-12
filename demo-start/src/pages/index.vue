@@ -1,35 +1,20 @@
-<script lang="ts">
-import { defineBasicLoader } from 'unplugin-vue-router/data-loaders/basic'
-import { getArtworksList } from '@/api/aic'
-import { parsePageQuery } from '@/utils'
-import { defineColadaLoader } from 'unplugin-vue-router/data-loaders/pinia-colada'
-
-// export const useArtworksList = defineBasicLoader('/', async (to) => {
-//   return getArtworksList({ page: parsePageQuery(to.query.page) })
-// })
-
-export const useArtworksList = defineColadaLoader('/', {
-  key: (to) => ['artworks', { page: parsePageQuery(to.query.page) }],
-  query: async (to) => {
-    return getArtworksList({ page: parsePageQuery(to.query.page) })
-  },
-  staleTime: 1000 * 60 * 60, // 1 hour
-})
-</script>
-
 <script setup lang="ts">
 import { useRouteQuery } from '@/composables/router'
 import AppPagination from '@/components/AppPagination.vue'
+import { onMounted, shallowRef } from 'vue';
+import { getArtworksList } from '@/api/aic';
 
 const currentPage = useRouteQuery<number>('page', {
   format: (v) => {
     const n = Number(v)
     return Number.isFinite(n) && n > 0 ? n : 1
   },
-  // deleteIf: (v) => !v || v === 1,
 })
 
-const { data: artworksList, isLoading, error } = useArtworksList()
+const artworksList = shallowRef<Awaited<ReturnType<typeof getArtworksList>>>()
+onMounted(async () => {
+  artworksList.value = await getArtworksList()
+})
 </script>
 
 <template>
@@ -41,7 +26,7 @@ const { data: artworksList, isLoading, error } = useArtworksList()
       <a href="https://www.artic.edu/">The Art Institute of Chicago</a>.
     </p>
 
-    <section>
+    <section v-if="artworksList">
       <AppPagination
         v-model:current-page="currentPage"
         :total="artworksList.pagination.total"
@@ -50,8 +35,7 @@ const { data: artworksList, isLoading, error } = useArtworksList()
 
       <br />
 
-      <p v-if="isLoading">Loading...</p>
-      <blockquote v-else-if="error">{{ error }}</blockquote>
+      <!-- TODO: loading and error -->
 
       <br />
 

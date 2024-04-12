@@ -1,69 +1,8 @@
-<script lang="ts">
-import { defineBasicLoader } from 'unplugin-vue-router/data-loaders/basic'
-import { getArtworkImagesURL, searchArtworks } from '../api/aic'
-import { NavigationResult } from 'vue-router/auto'
-import { useRouteQuery } from '@/composables/router'
-import { defineColadaLoader } from 'unplugin-vue-router/data-loaders/pinia-colada'
-import { parsePageQuery, parseQuerySearch } from '@/utils'
-
-
-// export const useArtworksSearchResults2 = defineBasicLoader(
-//   '/search',
-//   async (to) => {
-//     const query = parseQuerySearch(to.query.q)
-//     const page = parsePageQuery(to.query.page)
-
-//     if (query == null) {
-//       // stop the navigation
-//       throw new NavigationResult(false)
-//     }
-
-//     return searchArtworks(query, { page, limit: 25 })
-//   },
-// )
-
-export const useArtworksSearchResults = defineColadaLoader('/search', {
-  key: (to) => [
-    'artworks',
-    { q: parseQuerySearch(to.query.q), page: parsePageQuery(to.query.page) },
-  ],
-  query: async (to) => {
-    const query = parseQuerySearch(to.query.q)
-    const page = parsePageQuery(to.query.page)
-
-    if (query == null) {
-      // stop the navigation
-      throw new NavigationResult(false)
-    }
-
-    return searchArtworks(query, { page, limit: 25 })
-  },
-  staleTime: 1000 * 60 * 60, // 1 hour
-})
-
-export const useArtworksImages = defineBasicLoader(
-  '/search',
-  async () => {
-    const searchResults = await useArtworksSearchResults()
-    const images = new Map<number, string | null>()
-    const imageURLs = await getArtworkImagesURL(
-      searchResults.data.map((artwork) => artwork.id),
-    )
-    for (const artwork of imageURLs) {
-      images.set(artwork.id, artwork.image_url)
-    }
-
-    return images
-  },
-  {
-    lazy: true,
-    server: false,
-  },
-)
-</script>
 
 <script lang="ts" setup>
-import { ref, shallowReactive, watch } from 'vue'
+import { onMounted, ref, shallowRef } from 'vue'
+import { useRouteQuery } from '@/composables/router'
+import { searchArtworks } from '../api/aic'
 import AppPagination from '@/components/AppPagination.vue'
 
 const currentPage = useRouteQuery('page', {
@@ -77,27 +16,17 @@ const searchQuery = useRouteQuery('q', {
     return typeof v === 'string' ? v : ''
   },
 })
+
+const searchResults = shallowRef<Awaited<ReturnType<typeof searchArtworks>>>()
+
+onMounted(async () => {
+  searchResults.value = await searchArtworks(searchQuery.value, {
+    page: currentPage.value,
+    limit: 5
+  })
+})
+
 const searchText = ref<string>(searchQuery.value || '')
-
-const { data: searchResults, isLoading, error } = useArtworksSearchResults()
-
-const images = shallowReactive(new Map<number, string | null>())
-
-watch(
-  searchResults,
-  async (results) => {
-    const imagesToFetch = Array.from(
-      new Set<number>(results.data.map((artwork) => artwork.id)),
-    ).filter((id) => !images.has(id))
-    const imageURLs = await getArtworkImagesURL(imagesToFetch)
-
-    for (const { id, image_url } of imageURLs) {
-      images.set(id, image_url)
-    }
-  },
-  { immediate: true },
-)
-
 function submitSearch() {
   searchQuery.value = searchText.value
   currentPage.value = 1
@@ -110,8 +39,7 @@ function submitSearch() {
     <button>Search</button>
   </form>
 
-  <p v-if="isLoading">Searching...</p>
-  <blockquote v-else-if="error">{{ error }}</blockquote>
+<!-- loading and error -->
 
   <section v-if="searchResults">
     <AppPagination
@@ -131,7 +59,7 @@ function submitSearch() {
         :title="artwork.title"
       >
         <div class="loader item__content" v-if="artwork.thumbnail">
-          <img class="full-res" v-if="images?.get(artwork.id)" :src="images.get(artwork.id)!" />
+          <!-- <img class="full-res" v-if="images?.get(artwork.id)" :src="images.get(artwork.id)!" /> -->
           <img
             class="frozen"
             :src="artwork.thumbnail.lqip"
