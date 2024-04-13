@@ -1,8 +1,22 @@
+<script lang="ts">
+export const useArtworksList = defineColadaLoader('/', {
+  key: (to) => ['artworks', { page: parsePageQuery(to.query.page) }],
+  async query(to) {
+    return getArtworksList({
+      page: parsePageQuery(to.query.page),
+    })
+  },
+  staleTime: 1000 * 60 * 60,
+})
+</script>
+
 <script setup lang="ts">
 import { useRouteQuery } from '@/composables/router'
 import AppPagination from '@/components/AppPagination.vue'
-import { onMounted, shallowRef } from 'vue';
-import { getArtworksList } from '@/api/aic';
+import { getArtworksList } from '@/api/aic'
+import { defineBasicLoader } from 'unplugin-vue-router/data-loaders/basic'
+import { parsePageQuery } from '@/utils'
+import { defineColadaLoader } from 'unplugin-vue-router/data-loaders/pinia-colada'
 
 const currentPage = useRouteQuery<number>('page', {
   format: (v) => {
@@ -11,10 +25,7 @@ const currentPage = useRouteQuery<number>('page', {
   },
 })
 
-const artworksList = shallowRef<Awaited<ReturnType<typeof getArtworksList>>>()
-onMounted(async () => {
-  artworksList.value = await getArtworksList()
-})
+const { data: artworksList, isLoading, error } = useArtworksList()
 </script>
 
 <template>
@@ -35,7 +46,8 @@ onMounted(async () => {
 
       <br />
 
-      <!-- TODO: loading and error -->
+      <p v-if="isLoading">Loading...</p>
+      <blockquote v-else-if="error">{{ error }}</blockquote>
 
       <br />
 
