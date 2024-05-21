@@ -194,12 +194,44 @@ But not related to navigation. We have to handle the loading state, error, etc
  -->
 
 ---
+layout: two-cols
+---
+
+# Using Suspense
+
+```vue
+<script setup>
+const data = await fetchSomeData()
+</script>
+
+<template>
+  <div>
+    <h1>{{ data.title }}</h1>
+    <p>{{ data.body }}</p>
+
+    <NestedComponentThatAlsoFetches />
+  </div>
+</template>
+```
+
+::right::
+
+<v-clicks>
+
+- No local loading state
+- No local error handling
+- Cascading loading states
+
+</v-clicks>
+
+
+---
 
 # Data Loaders
 
 Goals:
 
-- Integrated with the navigation cycle
+- Integrated within the navigation cycle
   - Blocks (or not) navigation until data is ready
   - Can change or abort the navigation
 - Deduplicate requests and data access
