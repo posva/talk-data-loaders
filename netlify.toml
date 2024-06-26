@@ -1,16 +1,16 @@
 [build]
-publish = "dist"
 command = "npm run build"
+publish = "dist"
 
 [build.environment]
 NODE_VERSION = "20"
 
 [[redirects]]
 from = "/.well-known/*"
-to = "/.well-known/:splat"
 status = 200
+to = "/.well-known/:splat"
 
 [[redirects]]
 from = "/*"
-to = "/index.html"
 status = 200
+to = "/index.html"

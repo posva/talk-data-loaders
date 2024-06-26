@@ -1,6 +1,7 @@
 {
-  "name": "data-loaders-vuejs-live",
+  "name": "talk-data-loaders",
   "type": "module",
+  "packageManager": "pnpm@9.4.0",
   "private": true,
   "scripts": {
     "build": "slidev build",
@@ -8,8 +9,8 @@
     "export": "slidev export"
   },
   "dependencies": {
-    "@slidev/cli": "^0.49.0-beta.1",
     "@posva/slidev-theme": "^0.1.0",
-    "vue": "^3.4.21"
+    "@slidev/cli": "^0.49.12",
+    "vue": "^3.4.30"
   }
 }
