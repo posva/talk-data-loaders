@@ -1,4 +1,4 @@
-import type { LocationQueryValueRaw } from 'vue-router/auto'
+import type { LocationQueryValueRaw } from 'vue-router'
 
 export function parsePageQuery(
   value: LocationQueryValueRaw | LocationQueryValueRaw[],

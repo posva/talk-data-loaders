@@ -1,210 +1,31 @@
 import { mande } from 'mande'
-import type { LocationQueryValueRaw } from 'vue-router/auto'
+import { ref } from 'vue'
+import type { LocationQueryValueRaw } from 'vue-router'
 
 const artworks = mande('https://api.artic.edu/api/v1/artworks')
+
+export const successRate = ref(1)
 
 export interface PaginationParams {
   page?: number
   limit?: number
 }
 
-export function getArtworksList({
-  page = 1,
-  limit = 25,
-}: PaginationParams = {}) {
-  return artworks
-    .get<APIResponsePaginated<Artwork[]>>('/', {
-      query: { page, limit },
-    })
-    .then((response) => ({
-      ...response,
-      data: response.data.map((artwork) => ({
-        ...artwork,
-        image_url:
-          artwork.image_id &&
-          generateImageURL(response.config.iiif_url, artwork.image_id),
-      })),
-    }))
+export interface Config {
+  iiif_url: string
+  website_url: string
 }
 
-export function getArtworkImagesURL(artworksId: number[]) {
-  return artworks
-    .get<APIResponse<Pick<Artwork, 'image_id' | 'id'>[]>>('/', {
-      query: {
-        ids: artworksId.join(','),
-        fields: 'id,image_id',
-      },
-    })
-    .then((response) =>
-      response.data.map((artwork) => ({
-        ...artwork,
-        image_url: artwork.image_id
-          ? generateImageURL(response.config.iiif_url, artwork.image_id)
-          : null,
-      })),
-    )
-}
-
-export function getArtwork(id: number) {
-  return artworks.get<APIResponse<Artwork>>(id)
-}
-
-export function searchArtworks(
-  query: string | LocationQueryValueRaw,
-  { page = 1, limit = 5 }: PaginationParams = {},
-) {
-  // NOTE: the API seems to work without a query
-  // if (typeof query !== 'string' || !query) return Promise.resolve({ data: [] })
-  return artworks.get<APIResponsePaginated<ArtworkSearchResult[]>>('/search', {
-    query: { q: query, page, limit },
-  })
-}
-
-function generateImageURL(iiif_url: string, image_id: string) {
-  return `${iiif_url}/${image_id}/full/843,/0/default.jpg`
+export interface LicenseInfo {
+  license_text: string
+  license_links: string[]
+  version: string
 }
 
 export interface APIResponse<Data> {
   data: Data
   info: LicenseInfo
   config: Config
-}
-export interface APIResponsePaginated<Data> extends APIResponse<Data> {
-  pagination: Pagination
-}
-
-export interface ArtworkThumbnail {
-  lqip: string
-  width: number
-  height: number
-  alt_text: string
-}
-
-export interface ArtworkDimensionDetail {
-  depth: number | null
-  width: number
-  height: number
-  diameter: number | null
-  clarification: string | null
-}
-
-export interface ArtworkColor {
-  h: number
-  l: number
-  s: number
-  percentage: number
-  population: number
-}
-
-export interface ArtworkAutocompleteInput {
-  input: string[]
-  weight?: number
-  contexts: {
-    groupings: string[]
-  }
-}
-
-export interface Artwork {
-  id: number
-  api_model: string
-  api_link: string
-  is_boosted: boolean
-  title: string
-  alt_titles: null
-  thumbnail?: ArtworkThumbnail
-  main_reference_number: string
-  has_not_been_viewed_much: boolean
-  boost_rank: null
-  date_start: number
-  date_end: number
-  date_display: string
-  date_qualifier_title: string
-  date_qualifier_id: null
-  artist_display: string
-  place_of_origin: string
-  description: string
-  short_description: string | null
-  dimensions: string
-  dimensions_detail: ArtworkDimensionDetail[]
-  medium_display: string
-  inscriptions: string
-  credit_line: string
-  catalogue_display: string | null
-  publication_history: string
-  exhibition_history: string
-  provenance_text: string
-  edition: null
-  publishing_verification_level: string
-  internal_department_id: number
-  fiscal_year: number
-  fiscal_year_deaccession: null
-  is_public_domain: boolean
-  is_zoomable: boolean
-  max_zoom_window_size: number
-  copyright_notice: string | null
-  has_multimedia_resources: boolean
-  has_educational_resources: boolean
-  has_advanced_imaging: boolean
-  colorfulness: number
-  color: ArtworkColor
-  latitude: number | null
-  longitude: number | null
-  latlon: null
-  is_on_view: boolean
-  on_loan_display: string
-  gallery_title: null
-  gallery_id: null
-  nomisma_id: null
-  artwork_type_title: string
-  artwork_type_id: number
-  department_title: string
-  department_id: string
-  artist_id: number
-  artist_title: string
-  alt_artist_ids: any[]
-  artist_ids: number[]
-  artist_titles: string[]
-  category_ids: string[]
-  category_titles: string[]
-  term_titles: string[]
-  style_id: string | null
-  style_title: string | null
-  alt_style_ids: any[]
-  style_ids: string[]
-  style_titles: string[]
-  classification_id: string
-  classification_title: string
-  alt_classification_ids: string[]
-  classification_ids: string[]
-  classification_titles: string[]
-  subject_id: string
-  alt_subject_ids: string[]
-  subject_ids: string[]
-  subject_titles: string[]
-  material_id: string
-  alt_material_ids: string[]
-  material_ids: string[]
-  material_titles: string[]
-  technique_id: string
-  alt_technique_ids: string[]
-  technique_ids: string[]
-  technique_titles: string[]
-  theme_titles: string[]
-  image_id: string | null
-  image_url: string | null
-  alt_image_ids: any[]
-  document_ids: any[]
-  sound_ids: any[]
-  video_ids: any[]
-  text_ids: any[]
-  section_ids: number[]
-  section_titles: string[]
-  site_ids: any[]
-  suggest_autocomplete_boosted: string
-  suggest_autocomplete_all: ArtworkAutocompleteInput[]
-  source_updated_at: string
-  updated_at: string
-  timestamp: string
 }
 
 export interface Pagination {
@@ -216,15 +37,43 @@ export interface Pagination {
   next_url: string
 }
 
-export interface LicenseInfo {
-  license_text: string
-  license_links: string[]
-  version: string
+export interface APIResponsePaginated<Data> extends APIResponse<Data> {
+  pagination: Pagination
 }
 
-export interface Config {
-  iiif_url: string
-  website_url: string
+export interface ArtworkThumbnail {
+  lqip: string
+  width: number
+  height: number
+  alt_text: string
+}
+
+export interface ArtworkColor {
+  h: number
+  l: number
+  s: number
+  percentage: number
+  population: number
+}
+
+// list of fields to fetch from the API
+const FIELDS =
+  'id,title,artist_display,thumbnail,image_id,date_display,description,place_of_origin,dimensions,short_description,color,term_titles'
+
+export interface Artwork {
+  id: number
+  title: string
+  image_id: string | null
+  image_url?: string | null
+  thumbnail?: ArtworkThumbnail
+  date_display: string
+  artist_display: string
+  place_of_origin: string
+  description: string
+  short_description: string | null
+  dimensions: string
+  color: ArtworkColor | null
+  term_titles: string[]
 }
 
 export interface ArtworkSearchThumbnail {
@@ -234,13 +83,110 @@ export interface ArtworkSearchThumbnail {
   height: number
 }
 
-export interface ArtworkSearchResult {
+const SEARCH_FIELDS = 'id,title,thumbnail,image_id'
+export interface ArtworkSearchResult
+  extends Pick<
+    Artwork,
+    'id' | 'thumbnail' | 'image_id' | 'image_url' | 'title'
+  > {
   _score: number
-  thumbnail: ArtworkSearchThumbnail | null
-  api_model: string
-  is_boosted: boolean
-  api_link: string
-  id: number
-  title: string
-  timestamp: string
+}
+
+export async function getArtworksList({
+  page = 1,
+  limit = 25,
+}: PaginationParams = {}) {
+  const response = await artworks.get<APIResponsePaginated<Artwork[]>>('/', {
+    query: {
+      page,
+      limit,
+      fields: FIELDS,
+    },
+  })
+  return {
+    ...response,
+    data: response.data.map((artwork) => ({
+      ...artwork,
+      image_url:
+        artwork.image_id &&
+        generateImageURL(
+          response.config.iiif_url,
+          artwork.image_id,
+          artwork.thumbnail?.width,
+        ),
+    })),
+  }
+}
+
+export async function getArtwork(id: number | string) {
+  const { data: artwork, config } = await artworks.get<APIResponse<Artwork>>(
+    id,
+    {
+      query: { fields: FIELDS },
+    },
+  )
+  return {
+    ...artwork,
+    image_url:
+      artwork.image_id &&
+      generateImageURL(
+        config.iiif_url,
+        artwork.image_id,
+        artwork.thumbnail?.width,
+      ),
+  }
+}
+
+export async function getArtworkImagesURL(artworksId: number[]) {
+  const response = await artworks.get<
+    APIResponse<Pick<Artwork, 'image_id' | 'id'>[]>
+  >('/', {
+    query: {
+      ids: artworksId.join(','),
+      fields: 'id,image_id',
+    },
+  })
+  return response.data.map((artwork) => ({
+    ...artwork,
+    image_url: artwork.image_id
+      ? generateImageURL(response.config.iiif_url, artwork.image_id, 400)
+      : null,
+  }))
+}
+
+export async function searchArtworks(
+  query: string | LocationQueryValueRaw,
+  { page = 1, limit = 5 }: PaginationParams = {},
+) {
+  // NOTE: the API seems to work without a query
+  // if (typeof query !== 'string' || !query) return Promise.resolve({ data: [] })
+  const response = await artworks.get<
+    APIResponsePaginated<ArtworkSearchResult[]>
+  >('/search', {
+    query: { q: query, page, limit, fields: SEARCH_FIELDS },
+  })
+  return {
+    ...response,
+    data: response.data.map((artwork) => ({
+      ...artwork,
+      image_url:
+        artwork.image_id &&
+        generateImageURL(response.config.iiif_url, artwork.image_id),
+    })),
+  }
+}
+
+function generateImageURL(iiifUrl: string, imageId: string, maxSize = 843) {
+  return `${iiifUrl}/${imageId}/full/${sizeCloserTo(maxSize)},/0/default.jpg`
+}
+
+/**
+ * Returns the closest size among [200, 400, 600, 843] to the given size. The size must be greater or equal than the returned size.
+ * @param size - The size to compare
+ */
+function sizeCloserTo(size: number): number {
+  if (size > 843) return 843
+  if (size > 600) return 600
+  if (size > 400) return 400
+  return 200
 }

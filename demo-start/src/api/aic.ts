@@ -1,5 +1,5 @@
 import { mande } from 'mande'
-import type { LocationQueryValueRaw } from 'vue-router/auto'
+import type { LocationQueryValueRaw } from 'vue-router'
 
 const artworks = mande('https://api.artic.edu/api/v1/artworks')
 

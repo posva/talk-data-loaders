@@ -1,0 +1,127 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+.spinner {
+  display: inline-block;
+  width: 1em;
+  height: 1em;
+  border: var(--spinner-border-width, 2px) solid rgba(255, 255, 255, 0.3);
+  border-radius: 50%;
+  border-top-color: #fff;
+  animation: spin 1s ease-in-out infinite;
+  transform-origin: center;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.masonry img {
+  max-width: 100%;
+  display: block;
+  margin-bottom: 0;
+}
+
+.masonry figure {
+  margin: 0;
+  display: grid;
+  grid-template-rows: 1fr auto;
+  margin-bottom: 10px;
+  break-inside: avoid;
+}
+
+.masonry figure > img {
+  grid-row: 1 / -1;
+  grid-column: 1;
+}
+
+.masonry figure a {
+  color: black;
+  text-decoration: none;
+}
+
+.masonry figcaption {
+  grid-row: 2;
+  grid-column: 1;
+  background-color: rgba(255, 255, 255, 0.5);
+  padding: 0.2em 0.5em;
+  justify-self: start;
+}
+
+.masonry {
+  column-count: 4;
+  column-gap: 10px;
+}
+
+@media screen and (max-width: 1024px) {
+  .masonry {
+    column-count: 3;
+  }
+}
+
+@media screen and (max-width: 720px) {
+  .masonry {
+    column-count: 2;
+  }
+}
+
+@media screen and (max-width: 472px) {
+  .masonry {
+    column-count: 1;
+  }
+}
+
+.img-loader {
+  position: relative;
+  overflow: hidden;
+  width: auto;
+}
+
+.img-loader .full-res {
+  position: absolute;
+}
+
+.img-loader img {
+  display: block;
+  top: 0;
+  left: 0;
+  width: 100%;
+}
+
+.full-res {
+  position: relative;
+  float: left;
+  display: block;
+}
+
+.full-res::after {
+  position: absolute;
+  top: 0;
+  left: 0;
+  display: block;
+  width: 1000px;
+  height: 1000px;
+  content: '';
+  background: #efefef;
+}
+
+.img-frozen {
+  width: 100%;
+}
+
+.img-loader > .full-res {
+  animation: 0.2s ease-in 0.4s 1 forwards fade;
+  opacity: 0;
+}
+
+@keyframes fade {
+  0% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
+}

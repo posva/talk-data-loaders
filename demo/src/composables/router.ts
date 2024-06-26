@@ -4,7 +4,7 @@ import {
   type LocationQueryValueRaw,
   useRoute,
   useRouter,
-} from 'vue-router/auto'
+} from 'vue-router'
 
 // exported to ensure the same value is used across the app
 export let pendingQuery: null | undefined | LocationQueryRaw

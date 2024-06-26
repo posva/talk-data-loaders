@@ -1,11 +1,10 @@
 <script lang="ts">
 import { defineBasicLoader } from 'unplugin-vue-router/data-loaders/basic'
-import { getArtworkImagesURL, searchArtworks } from '../api/aic'
+import { getArtworkImagesURL, searchArtworks } from '@/api/aic'
 import { NavigationResult } from 'vue-router/auto'
 import { useRouteQuery } from '@/composables/router'
 import { defineColadaLoader } from 'unplugin-vue-router/data-loaders/pinia-colada'
 import { parsePageQuery, parseQuerySearch } from '@/utils'
-
 
 // export const useArtworksSearchResults2 = defineBasicLoader(
 //   '/search',
@@ -22,27 +21,30 @@ import { parsePageQuery, parseQuerySearch } from '@/utils'
 //   },
 // )
 
-export const useArtworksSearchResults = defineColadaLoader('/search', {
-  key: (to) => [
-    'artworks',
-    { q: parseQuerySearch(to.query.q), page: parsePageQuery(to.query.page) },
-  ],
-  query: async (to) => {
-    const query = parseQuerySearch(to.query.q)
-    const page = parsePageQuery(to.query.page)
+export const useArtworksSearchResults = defineColadaLoader(
+  '/art-gallery/search',
+  {
+    key: (to) => [
+      'artworks',
+      { q: parseQuerySearch(to.query.q), page: parsePageQuery(to.query.page) },
+    ],
+    query: async (to) => {
+      const query = parseQuerySearch(to.query.q)
+      const page = parsePageQuery(to.query.page)
 
-    if (query == null) {
-      // stop the navigation
-      throw new NavigationResult(false)
-    }
+      if (query == null) {
+        // stop the navigation
+        throw new NavigationResult(false)
+      }
 
-    return searchArtworks(query, { page, limit: 25 })
+      return searchArtworks(query, { page, limit: 25 })
+    },
+    staleTime: 1000 * 60 * 60, // 1 hour
   },
-  staleTime: 1000 * 60 * 60, // 1 hour
-})
+)
 
 export const useArtworksImages = defineBasicLoader(
-  '/search',
+  '/art-gallery/search',
   async () => {
     const searchResults = await useArtworksSearchResults()
     const images = new Map<number, string | null>()
@@ -105,13 +107,10 @@ function submitSearch() {
 </script>
 
 <template>
-  <form @submit.prevent="submitSearch()">
-    <input type="text" v-model="searchText" />
+  <form class="space-x-2" @submit.prevent="submitSearch()">
+    <input v-model="searchText" type="text" />
     <button>Search</button>
   </form>
-
-  <p v-if="isLoading">Searching...</p>
-  <blockquote v-else-if="error">{{ error }}</blockquote>
 
   <section v-if="searchResults">
     <AppPagination
@@ -120,133 +119,48 @@ function submitSearch() {
       :per-page="searchResults.pagination.limit"
     />
 
-    <br />
+    <hr />
 
     <div class="masonry">
-      <figure
+      <RouterLink
         v-for="artwork in searchResults.data"
         :id="`${artwork.title}_${artwork.id}`"
         :key="artwork.id"
+        :to="{ name: '/art-gallery/artwork.[id]', params: { id: artwork.id } }"
         class="item"
-        :title="artwork.title"
       >
-        <div class="loader item__content" v-if="artwork.thumbnail">
-          <img class="full-res" v-if="images?.get(artwork.id)" :src="images.get(artwork.id)!" />
-          <img
-            class="frozen"
-            :src="artwork.thumbnail.lqip"
-            :alt="artwork.thumbnail.alt_text"
-          />
-        </div>
-        <figcaption>
-          <a :href="`#${artwork.title}_${artwork.id}`">
-            {{ artwork.title }}
-          </a>
-        </figcaption>
-      </figure>
+        <figure :title="artwork.title">
+          <div v-if="artwork.thumbnail" class="img-loader item__content">
+            <img
+              v-if="artwork.image_url"
+              class="full-res"
+              :src="artwork.image_url"
+            />
+            <img
+              class="img-frozen"
+              :style="{
+                aspectRatio: `${artwork.thumbnail.width} / ${artwork.thumbnail.height}`,
+              }"
+              :src="artwork.thumbnail.lqip"
+              :alt="artwork.thumbnail.alt_text"
+            />
+          </div>
+          <figcaption>
+            <a :href="`#${artwork.title}_${artwork.id}`">
+              {{ artwork.title }}
+            </a>
+          </figcaption>
+        </figure>
+      </RouterLink>
     </div>
+
+    <hr />
+
+    <AppPagination
+      v-model:current-page="currentPage"
+      :total="searchResults.pagination.total"
+      :per-page="searchResults.pagination.limit"
+    />
   </section>
+  <section v-else>Loading...</section>
 </template>
-
-<style scoped>
-.masonry img {
-  max-width: 100%;
-  display: block;
-  margin-bottom: 0;
-}
-
-figure {
-  margin: 0;
-  display: grid;
-  grid-template-rows: 1fr auto;
-  margin-bottom: 10px;
-  break-inside: avoid;
-}
-
-figure > img {
-  grid-row: 1 / -1;
-  grid-column: 1;
-}
-
-figure a {
-  color: black;
-  text-decoration: none;
-}
-
-figcaption {
-  grid-row: 2;
-  grid-column: 1;
-  background-color: rgba(255, 255, 255, 0.5);
-  padding: 0.2em 0.5em;
-  justify-self: start;
-}
-
-.masonry {
-  column-count: 4;
-  column-gap: 10px;
-}
-
-@media screen and (max-width: 1024px) {
-  .masonry {
-    column-count: 3;
-  }
-}
-
-@media screen and (max-width: 500px) {
-  .masonry {
-    column-count: 2;
-  }
-}
-
-.loader {
-  position: relative;
-  overflow: hidden;
-  width: auto;
-}
-
-.loader .full-res {
-  position: absolute;
-}
-
-.loader img {
-  display: block;
-  top: 0;
-  left: 0;
-  width: 100%;
-}
-
-.full-res {
-  position: relative;
-  float: left;
-  display: block;
-
-  &::after {
-    position: absolute;
-    top: 0;
-    left: 0;
-    display: block;
-    width: 1000px;
-    height: 1000px;
-    content: '';
-    background: #efefef;
-  }
-}
-
-.frozen {
-  width: 100%;
-}
-
-.loader > .full-res {
-  animation: 0.2s ease-in 0.4s 1 forwards fade;
-  opacity: 0;
-}
-
-@keyframes fade {
-  0% {
-    opacity: 0;
-  }
-  100% {
-    opacity: 1;
-  }
-}
-</style>
