@@ -1,5 +1,4 @@
 <script lang="ts">
-import { defineBasicLoader } from 'unplugin-vue-router/data-loaders/basic'
 import { getArtworksList } from '@/api/aic'
 import { parsePageQuery } from '@/utils'
 import { defineColadaLoader } from 'unplugin-vue-router/data-loaders/pinia-colada'

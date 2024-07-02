@@ -1,10 +1,24 @@
+import { useSessionStorage } from '@vueuse/core'
 import { mande } from 'mande'
-import { ref } from 'vue'
+import { reactive, ref } from 'vue'
 import type { LocationQueryValueRaw } from 'vue-router'
 
 const artworks = mande('https://api.artic.edu/api/v1/artworks')
 
-export const successRate = ref(1)
+export const successRate = useSessionStorage<number>('aic-success-rate', 1)
+export const delay = useSessionStorage<number>('aic-delay', 0)
+export const existingDelays = reactive(new Map<symbol, Date>())
+
+async function simulateNetworkIssues() {
+  const key = Symbol()
+  existingDelays.set(key, new Date())
+  await new Promise((resolve) => setTimeout(resolve, delay.value))
+  existingDelays.delete(key)
+  const success = Math.random() <= successRate.value
+  if (!success) {
+    throw new Error('Network error')
+  }
+}
 
 export interface PaginationParams {
   page?: number
@@ -96,6 +110,7 @@ export async function getArtworksList({
   page = 1,
   limit = 25,
 }: PaginationParams = {}) {
+  await simulateNetworkIssues()
   const response = await artworks.get<APIResponsePaginated<Artwork[]>>('/', {
     query: {
       page,
@@ -119,6 +134,7 @@ export async function getArtworksList({
 }
 
 export async function getArtwork(id: number | string) {
+  await simulateNetworkIssues()
   const { data: artwork, config } = await artworks.get<APIResponse<Artwork>>(
     id,
     {
@@ -138,6 +154,7 @@ export async function getArtwork(id: number | string) {
 }
 
 export async function getArtworkImagesURL(artworksId: number[]) {
+  await simulateNetworkIssues()
   const response = await artworks.get<
     APIResponse<Pick<Artwork, 'image_id' | 'id'>[]>
   >('/', {
@@ -158,6 +175,7 @@ export async function searchArtworks(
   query: string | LocationQueryValueRaw,
   { page = 1, limit = 5 }: PaginationParams = {},
 ) {
+  await simulateNetworkIssues()
   // NOTE: the API seems to work without a query
   // if (typeof query !== 'string' || !query) return Promise.resolve({ data: [] })
   const response = await artworks.get<
