@@ -7,6 +7,9 @@ info: |
 
   Copyright 2024-present Eduardo San Martin Morote
 class: text-center
+transition: view-transition
+transition-duration: 1000ms
+mdc: true
 ---
 
 <div class="flex flex-col items-start h-full pt-16" >
@@ -15,11 +18,11 @@ class: text-center
 
 <p class="text-left">
 
-<span class="font-bold font-serif my-0 text-4xl">Eduardo San Martin Morote</span>
+<span class="my-0 font-serif text-4xl font-bold">Eduardo San Martin Morote</span>
 <br>
-<span class="font-light font-serif my-0 text-xl">Frontend Nerd</span>
+<span class="my-0 font-serif text-xl font-light">Frontend Nerd</span>
 <br>
-<span>🍍 Pinia & <logos-vue /> Router Author</span>
+<span><logos-pinia />, <logos-vue /> Router, <img class="inline-block -translate-y-[5px]" style="height: 1.5em;" src="/vuefire.svg"> Author</span>
 
 </p>
 
@@ -57,7 +60,18 @@ class: text-center
 
 ---
 
-# Client-only Data Fetching
+<div class="font-serif text-3xl text-center">
+
+#### Client-only Data Fetching {.inline-block.view-transition-title}
+#### Using a composable
+#### Suspense
+#### etc
+
+</div>
+
+---
+
+# Client-only Data Fetching {.inline-block.view-transition-title}
 
 ````md magic-move
 ```vue{*|4}
@@ -75,7 +89,7 @@ const data = ref()
 </template>
 ```
 
-```vue{2,6}
+```vue{2,5-7}
 <script setup lang="ts">
 import { ref, onMounted } from 'vue'
 
@@ -192,6 +206,10 @@ const { status, data, error } = useQuery({
 <!-- 
 But not related to navigation. We have to handle the loading state, error, etc
  -->
+ 
+<!-- 
+Show how to support how it works with SSR
+-->
 
 ---
 layout: two-cols
@@ -201,7 +219,8 @@ layout: two-cols
 
 ```vue
 <script setup>
-const data = await fetchSomeData()
+const route = useRoute()
+const data = await fetchSomeData(route.params.id)
 </script>
 
 <template>
@@ -221,6 +240,9 @@ const data = await fetchSomeData()
 - No local loading state
 - No local error handling
 - Cascading loading states
+- Everything depends on _rendering_ the component
+  - No preloading
+  - No update if params change
 
 </v-clicks>
 
@@ -231,6 +253,8 @@ const data = await fetchSomeData()
 
 Goals:
 
+- Local
+  - Write it next to you
 - Integrated within the navigation cycle
   - Blocks (or not) navigation until data is ready
   - Can change or abort the navigation
@@ -272,9 +296,56 @@ layout: cover
 
 - [<logos-vue /> unplugin-vue-router](https://github.com/posva/unplugin-vue-router)
 - [🍹 Pinia Colada](https://github.com/posva/pinia-colada)
-- [👨‍💻 Let's work together](https://cal.com/posva)
+- [🌁 Slides <span class="font-mono">https://data-loaders-frontend-nation.netlify.app</span>](https://data-loaders-frontend-nation.netlify.app)
+- [<carbon-logo-github /> <span class="font-mono">posva/data-loaders-frontend-nation</span>](https://github.com/posva/data-loaders-frontend-nation)
+- [❤️ Sponsor me](https://esm.dev/open-source)
 
 </v-clicks>
+
+<!--
+- Show project index, it shows artwork
+- Install uvr
+- add to vite config (for pages and types but not needed for data loading itself)
+- add plugins to main.ts
+- index.vue
+  - migrate to defineBasicLoader
+  - add script
+  - set the page to 1
+  - export and explain what it does
+  - refactor setup to use it
+  - pass the page from params
+- search.vue
+  - not fully working
+  - add basic loader that search artworks
+  - parse query page and text
+  - explain that if invalid we can throw a navigation result or return to control the navigation
+  - show redirect to page 1
+  - Add full res images
+    - extra fetch that depends on the first one
+    - add new loader
+    - await the first loader
+    - explain this is different from below
+    - data is consistent
+    - await getArtworkImagesURLs (needs to map the data to their ids)
+    - use a map to host the artworks based on their id
+    - return it
+  - How not to wait for the full res images
+    - set the loader to lazy
+    - show the network panel
+    - this is sequential loading
+    - show server: false
+  - Alright but pretty slow when coming back to a visited page. cache data?
+  - pinia colada: fetching layer
+  - integrate well with data loaders
+  - migrate index loader to pinia colada
+  - show how good it is
+  - explain staleTime and show
+  - do the same for search
+  - explain the data loader is implemented by using pinia colada, outside of pinia colada
+    - this is the big advantage of loaders, they are mainly a spec to be followed
+    - any library could implement their own loader
+    - the colada loader has much more like only triggering if used params and query change
+ -->
 
 
 <style>
