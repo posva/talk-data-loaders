@@ -7,6 +7,7 @@ export const useArtworkDetails = defineColadaLoader(
   {
     key: (to) => ['artwork', { id: to.params.id }],
     query: (to) => getArtwork(to.params.id),
+    staleTime: 1000 * 60 * 60, // 1 hour
   },
 )
 </script>

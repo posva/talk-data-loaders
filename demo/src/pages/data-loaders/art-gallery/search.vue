@@ -134,6 +134,7 @@ function submitSearch() {
               v-if="artwork.image_url"
               class="full-res"
               :src="artwork.image_url"
+              alt="Full resolution"
             />
             <img
               class="img-frozen"
