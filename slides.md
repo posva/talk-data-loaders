@@ -14,7 +14,7 @@ mdc: true
 
 <div class="flex flex-col items-start h-full pt-16" >
 
-<img class="w-32 h-32 mb-4 rounded-full" src="https://avatars.githubusercontent.com/u/664177?v=4" alt="eduardo avatar">
+<img class="w-32 h-32 mb-4 rounded-full" src="/posva.jpeg" alt="eduardo avatar">
 
 <p class="text-left">
 
@@ -118,43 +118,20 @@ watch(() => route.params.id, async (id) => {
 
 ::right::
 
-<v-clicks depth=2>
+<v-clicks depth=2 at="-4">
 
 - Simple
 - Customizable
+
+
+</v-clicks>
+
+<v-clicks at="+3">
+
 - Can use component data
 - Client-only
 
 </v-clicks>
-
-
-<!-- Good parts 👍
-
-<v-clicks>
-
-- Easy
-- Intuitive
-- Collocated with the page component
-- Extendable
-
-</v-clicks>
-
-<v-click at="+2">
-
-Bad parts 👎
-
-</v-click>
-
-<v-clicks>
-
-- No SSR
-- **Verbose**
-- No integration with navigation
-
-</v-clicks>
-
-::right:: -->
-
 
 <!-- 
 Navigation: important for
@@ -339,6 +316,13 @@ router.beforeResolve(async to => {
 ```
 
 ::right::
+
+<v-clicks at="1">
+
+- Define a custom `meta` property
+- Consume it in a navigation guard
+
+</v-clicks>
 
 <v-clicks>
 
@@ -554,14 +538,30 @@ Since the
  
 ---
 
+## Consistent partial updates
+
+In blocking Loaders: data updates after navigation
+
+<v-click>
+
+Lazy loaders _immediately_ update since they are not navigation aware.
+
+</v-click>
+
+---
+layout: iframe
+url: http://localhost:5173/inconsistent-state
+---
+
+---
+
+
 ## Non blocking "lazy" loaders
 
 ````md magic-move
 ```vue{2-7}
 <script lang="ts">
 export const useUserData = defineLoader(async (route) => {
-  // if it throws it cancels the navigation
-  // just like in a navigation guard
   const user = await getUserById(route.params.id)
   return user
 })
@@ -575,12 +575,10 @@ const { data: user, isLoading, error, reload } = useUserData()
 ```vue{7-9}
 <script lang="ts">
 export const useUserData = defineLoader(async (route) => {
-  // if it throws it cancels the navigation
-  // just like in a navigation guard
   const user = await getUserById(route.params.id)
   return user
 }, {
-  lazy: true,
+  lazy: true, // do not await this during navigation
 })
 </script>
 
@@ -603,9 +601,8 @@ const { data: user, isLoading, error, reload } = useUserData()
 layout: two-cols
 ---
 
-## Non blocking "lazy" loaders
+## Why "lazy" loaders
 
-````md magic-move
 ```vue{*|2-4,6-9|13|15}
 <script lang="ts">
 export const useArtworkDetails = defineLoader(
@@ -626,7 +623,6 @@ const {
 } = useArtworkRelatedArtists()
 </script>
 ```
-````
 
 ::right::
 
@@ -651,31 +647,177 @@ Related Artists `data` will usually be `undefined`
 
 ## Error Management
 
+Define _expected_ errors to **not cancel** the navigation
+
+```vue{*|5-7|13}
+<script lang="ts">
+export const useArtworkDetails = defineLoader(
+ (to) => getArtwork(to.params.id),
+ {
+  // MyCustomError instances will appear in `error`
+  // without blocking the navigation
+  errors: { MyCustomError }
+ }
+)
+</script>
+
+<script lang="ts" setup>
+const { data: artwork, status, error } = useArtworkDetails()
+</script>
+```
+
+<v-clicks>
+
+Handle the error locally
+
+</v-clicks>
+
 ---
-layout: iframe
-url: https://uvr.esm.is/rfcs/data-loaders/
+
+## What about extra features?
+
+Cache, persistance, ???
+
+````md magic-move
+```vue{*|2}
+<script lang="ts">
+export const useArtworkDetails = defineLoader(
+ (to) => getArtwork(to.params.id),
+)
+</script>
+
+<script lang="ts" setup>
+const { data: artwork, status, error } = useArtworkDetails()
+</script>
+```
+
+```vue{*|1,4}
+<script lang="ts">
+import { defineBasicLoader } from 'unplugin-vue-router/data-loaders/basic'
+
+export const useArtworkDetails = defineBasicLoader(
+ (to) => getArtwork(to.params.id),
+)
+</script>
+
+<script lang="ts" setup>
+const { data: artwork, status, error } = useArtworkDetails()
+</script>
+```
+
+```vue{2,4-7|5}
+<script lang="ts">
+import { defineColadaLoader } from 'unplugin-vue-router/data-loaders/colada'
+
+export const useArtworkDetails = defineColadaLoader({
+  key: (to) => ['artwork', to.params.id], // Specific to Pinia
+  query: (to) => getArtwork(to.params.id),
+})
+</script>
+
+<script lang="ts" setup>
+const { data: artwork, status, error } = useArtworkDetails()
+</script>
+```
+
+```vue{7}
+<script lang="ts">
+import { defineColadaLoader } from 'unplugin-vue-router/data-loaders/colada'
+
+export const useArtworkDetails = defineColadaLoader({
+  key: (to) => ['artwork', to.params.id],
+  query: (to) => getArtwork(to.params.id),
+  staleTime: 1000 * 60 * 5, // Data is fresh for 5 minutes
+})
+</script>
+
+<script lang="ts" setup>
+const { data: artwork, status, error } = useArtworkDetails()
+</script>
+```
+
+```vue{16}
+<script lang="ts">
+import { defineColadaLoader } from 'unplugin-vue-router/data-loaders/colada'
+
+export const useArtworkDetails = defineColadaLoader({
+  key: (to) => ['artwork', to.params.id],
+  query: (to) => getArtwork(to.params.id),
+  staleTime: 1000 * 60 * 5, // Data is fresh for 5 minutes
+})
+</script>
+
+<script lang="ts" setup>
+const { 
+  data: artwork,
+  status,
+  error,
+  refresh, // Refresh the data only if needed
+} = useArtworkDetails()
+</script>
+```
+````
+
 ---
 
+## `defineLoader()` is a spec
 
-<div class="font-serif text-3xl text-center">
+Existing:
 
-#### Client-only Data Fetching {.inline-block.view-transition-title}
-#### Using a composable
-#### Suspense
-#### etc
+- Bare minimum implementation: `defineBasicLoader()`
+- Pinia Colada integration: `defineColadaLoader()`
 
-</div>
+<v-click>
+
+Potential future implementations:
+
+- Vue Query: `defineQueryLoader()`
+- Websockets `defineWebSocketLoader()`
+- GraphQL `defineGraphQLLoader()`
+- VueFire `defineFirestoreLoader()`
+
+</v-click>
 
 ---
+layout: cover
+---
 
+# Piña Colada?
 
+<img src="/pina-colada.jpeg" class="mx-auto max-h-96">
+
+---
+layout: cover
+transition: view-transition
+---
+
+# [Pinia Colada]{.inline-block.view-transition-title}
+
+<img src="/pinia-colada.png" class="mx-auto max-h-96 view-transition-image">
 
 ---
 layout: two-cols
 ---
 
-# Using Suspense
+## [Pinia Colada]{.inline-block.view-transition-title}
 
+<img src="/pinia-colada.png" class="block mx-auto max-h-96 view-transition-image">
+
+::right::
+
+Async State management layer for Pinia
+
+Cache, cache invalidation, deduplication, plugins, ...
+
+**Still work in progress**
+
+- <carbon-logo-github /> [posva/pinia-colada]{.font-mono}
+- 📚 [https://pinia-colada.esm.dev](https://pinia-colada.esm.dev/)
+
+---
+layout: iframe
+url: https://uvr.esm.is/rfcs/data-loaders/
+---
 
 ---
 
@@ -702,48 +844,16 @@ Goals:
  -->
 
 ---
-
-# Data Loaders
-
-```vue{*|1,12|4-9|13}
-<script lang="ts">
-import { getUserById } from '../api'
-
-export const useUserData = defineLoader(async (route) => {
-  const user = await getUserById(route.params.id)
-  // ...
-  // return anything you want to expose
-  return user
-})
-</script>
-
-<script lang="ts" setup>
-const { data: user, isLoading, error, reload } = useUserData()
-</script>
-```
-
-<!-- 
-TODO:
-
-- Data loaders are a set of interfaces to implement and a Vue plugin that integrates them with Vue Router
-- Data loaders are not limited to the proposed implementation (show how colada adds stuff)
- -->
-
----
 layout: cover
 ---
 
-# Demo Time
-
-<v-clicks>
+# Links
 
 - [<logos-vue /> unplugin-vue-router](https://github.com/posva/unplugin-vue-router)
+- [Data Loaders RFC](https://uvr.esm.is/rfcs/data-loaders/)
 - [🍹 Pinia Colada](https://github.com/posva/pinia-colada)
-- [🌁 Slides <span class="font-mono">https://data-loaders-frontend-nation.netlify.app</span>](https://data-loaders-frontend-nation.netlify.app)
-- [<carbon-logo-github /> <span class="font-mono">posva/data-loaders-frontend-nation</span>](https://github.com/posva/data-loaders-frontend-nation)
+- [ Slides + demo <carbon-logo-github /><span class="font-mono">posva/data-loaders</span>](https://github.com/posva/data-loaders)
 - [❤️ Sponsor me](https://esm.dev/open-source)
-
-</v-clicks>
 
 <!--
 - Show project index, it shows artwork
