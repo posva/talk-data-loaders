@@ -12,4 +12,9 @@ export default defineNuxtConfig({
   },
 
   modules: ['@pinia/nuxt'],
+
+  imports: {
+    // TODO: why not?
+    // dirs: ['~/components', '~/utils', '~/loaders'],
+  },
 })
