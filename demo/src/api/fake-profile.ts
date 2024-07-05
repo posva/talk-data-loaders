@@ -1,20 +1,20 @@
 const delay = (t: number) => new Promise((r) => setTimeout(r, t))
 
 const profiles = {
-  yyx: {
+  yyx990803: {
     name: 'Evan You',
-    imageURL: '...',
+    imageURL: '/yyx990803.jpeg',
   },
   posva: {
     name: 'Eduardo San Martin Morote',
-    imageURL: '...',
+    imageURL: '/posva.jpeg',
   },
 } satisfies Record<string, { name: string; imageURL: string }>
 
 const followerCount = {
-  posva: 5200,
-  yyx: 54044,
-} satisfies Record<keyof typeof profiles, number>
+  posva: '5.7k',
+  yyx990803: '100k',
+} satisfies Record<keyof typeof profiles, string>
 
 export async function getProfileInfo(id: string) {
   await delay(500)

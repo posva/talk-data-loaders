@@ -1,11 +1,11 @@
 <script lang="ts" setup>
-import { getFollowerCount, getProfileInfo } from '@/api/fake-profile'
+import { getFollowerCount } from '@/api/fake-profile'
 import { ref, watch } from 'vue'
 import { useRoute } from 'vue-router'
 
 const route = useRoute('/inconsistent-state/profile.[id].client-side')
 
-const followerCount = ref<number>()
+const followerCount = ref<string>()
 watch(
   () => route.params.id,
   async (id) => {
@@ -16,6 +16,6 @@ watch(
 </script>
 
 <template>
-  <p v-if="followerCount != null">Followers: {{ followerCount }}</p>
+  <p v-if="followerCount != null">{{ followerCount }} followers</p>
   <p v-else>Loading...</p>
 </template>

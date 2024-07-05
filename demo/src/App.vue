@@ -1,9 +1,10 @@
 <script lang="ts" setup>
-import { useNow } from '@vueuse/core'
+import { useLocalStorage, useNow } from '@vueuse/core'
 import { successRate, delay, existingDelays } from './api/aic'
 import NavBar from '@/NavBar.vue'
 
 const now = useNow({ interval: 50 })
+const areSettingsOpen = useLocalStorage('settings-open', true)
 </script>
 
 <template>
@@ -12,14 +13,7 @@ const now = useNow({ interval: 50 })
     <NavBar />
   </header>
 
-  <p>
-    Artwork API by
-    <a href="https://api.artic.edu/docs/#quick-start"
-      >Art Institute of Chicago</a
-    >.
-  </p>
-
-  <details open>
+  <details :open="areSettingsOpen" @toggle="areSettingsOpen = ($event.target as HTMLDetailsElement).open">
     <summary>Connection settings</summary>
 
     <div>
