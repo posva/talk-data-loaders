@@ -20,9 +20,10 @@ declare module 'vue-router/auto-routes' {
   export interface RouteNamedMap {
     '/': RouteRecordInfo<'/', '/', Record<never, never>, Record<never, never>>,
     '/about': RouteRecordInfo<'/about', '/about', Record<never, never>, Record<never, never>>,
-    '/art-gallery': RouteRecordInfo<'/art-gallery', '/art-gallery', Record<never, never>, Record<never, never>>,
-    '/art-gallery/': RouteRecordInfo<'/art-gallery/', '/art-gallery', Record<never, never>, Record<never, never>>,
-    '/art-gallery/artwork.[id]': RouteRecordInfo<'/art-gallery/artwork.[id]', '/art-gallery/artwork/:id', { id: ParamValue<true> }, { id: ParamValue<false> }>,
-    '/art-gallery/search': RouteRecordInfo<'/art-gallery/search', '/art-gallery/search', Record<never, never>, Record<never, never>>,
+    '/data-loaders/art-gallery/': RouteRecordInfo<'/data-loaders/art-gallery/', '/data-loaders/art-gallery', Record<never, never>, Record<never, never>>,
+    '/data-loaders/art-gallery/artwork.[id]': RouteRecordInfo<'/data-loaders/art-gallery/artwork.[id]', '/data-loaders/art-gallery/artwork/:id', { id: ParamValue<true> }, { id: ParamValue<false> }>,
+    '/data-loaders/art-gallery/search': RouteRecordInfo<'/data-loaders/art-gallery/search', '/data-loaders/art-gallery/search', Record<never, never>, Record<never, never>>,
+    '/inconsistent-state/': RouteRecordInfo<'/inconsistent-state/', '/inconsistent-state', Record<never, never>, Record<never, never>>,
+    '/inconsistent-state/profile.[id].client-side': RouteRecordInfo<'/inconsistent-state/profile.[id].client-side', '/inconsistent-state/profile/:id/client-side', { id: ParamValue<true> }, { id: ParamValue<false> }>,
   }
 }

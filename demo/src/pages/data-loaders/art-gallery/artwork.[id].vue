@@ -3,7 +3,7 @@ import { defineColadaLoader } from 'unplugin-vue-router/data-loaders/pinia-colad
 import { getArtwork } from '@/api/aic'
 
 export const useArtworkDetails = defineColadaLoader(
-  '/art-gallery/artwork.[id]',
+  '/data-loaders/art-gallery/artwork.[id]',
   {
     key: (to) => ['artwork', { id: to.params.id }],
     query: (to) => getArtwork(to.params.id),
@@ -48,9 +48,9 @@ const { data: artwork, status } = useArtworkDetails()
       <dd>{{ artwork.dimensions }}</dd>
       <template v-if="artwork.color">
         <dt>Color</dt>
-        <dd class="space-x-1 flex">
+        <dd class="flex space-x-1">
           <span
-            class="rounded-full inline-block border w-6 h-6 ml-2"
+            class="inline-block w-6 h-6 ml-2 border rounded-full"
             :style="{
               backgroundColor: `hsl(${artwork.color.h}, ${artwork.color.s}%, ${artwork.color.l}%)`,
             }"
@@ -67,11 +67,11 @@ const { data: artwork, status } = useArtworkDetails()
     <hr />
 
     <h3>Terms</h3>
-    <ul class="list-none flex flex-wrap p-0">
+    <ul class="flex flex-wrap p-0 list-none">
       <li
         v-for="term in artwork.term_titles"
         :key="term"
-        class="rounded-full border px-2 dark:bg-slate-900 bg-slate-200 mr-1"
+        class="px-2 mr-1 border rounded-full dark:bg-slate-900 bg-slate-200"
       >
         {{ term }}
       </li>

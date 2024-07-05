@@ -7,13 +7,16 @@ import { defineColadaLoader } from 'unplugin-vue-router/data-loaders/pinia-colad
 //   return getArtworksList({ page: parsePageQuery(to.query.page) })
 // })
 
-export const useArtworksList = defineColadaLoader('/art-gallery/', {
-  key: (to) => ['artworks', { page: parsePageQuery(to.query.page) }],
-  query: async (to) => {
-    return getArtworksList({ page: parsePageQuery(to.query.page) })
+export const useArtworksList = defineColadaLoader(
+  '/data-loaders/art-gallery/',
+  {
+    key: (to) => ['artworks', { page: parsePageQuery(to.query.page) }],
+    query: async (to) => {
+      return getArtworksList({ page: parsePageQuery(to.query.page) })
+    },
+    staleTime: 1000 * 60 * 60, // 1 hour
   },
-  staleTime: 1000 * 60 * 60, // 1 hour
-})
+)
 </script>
 
 <script setup lang="ts">
@@ -32,6 +35,16 @@ const { data: artworksList, isLoading, error } = useArtworksList()
 </script>
 
 <template>
+  <nav>
+    <RouterLink :to="{ name: '/data-loaders/art-gallery/' }">Home</RouterLink>
+    |
+    <RouterLink :to="{ name: '/data-loaders/art-gallery/search' }"
+      >Search</RouterLink
+    >
+  </nav>
+
+  <hr />
+
   <main>
     <h2>Museum Artworks List</h2>
 
@@ -55,7 +68,7 @@ const { data: artworksList, isLoading, error } = useArtworksList()
           :id="`${artwork.title}_${artwork.id}`"
           :key="artwork.id"
           :to="{
-            name: '/art-gallery/artwork.[id]',
+            name: '/data-loaders/art-gallery/artwork.[id]',
             params: { id: artwork.id },
           }"
           class="item"

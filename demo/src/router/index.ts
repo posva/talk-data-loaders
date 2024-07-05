@@ -14,12 +14,14 @@ if (typeof document !== 'undefined') {
   })
   let timeout: ReturnType<typeof setTimeout> | undefined
   router.beforeEach((to) => {
+    // delay only with loaders
+    const delay = to.meta.loaders?.length ? 200 : 0
     // display the loader bar only after 200ms
     timeout = setTimeout(() => {
       if (router.currentRoute.value !== to) {
         NProgress.start()
       }
-    }, 200)
+    }, delay)
   })
 
   router.afterEach(() => {

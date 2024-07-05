@@ -22,7 +22,7 @@ import { parsePageQuery, parseQuerySearch } from '@/utils'
 // )
 
 export const useArtworksSearchResults = defineColadaLoader(
-  '/art-gallery/search',
+  '/data-loaders/art-gallery/search',
   {
     key: (to) => [
       'artworks',
@@ -40,11 +40,13 @@ export const useArtworksSearchResults = defineColadaLoader(
       return searchArtworks(query, { page, limit: 25 })
     },
     staleTime: 1000 * 60 * 60, // 1 hour
+    // lazy: (to, from) => to.name !== to.from
   },
 )
 
-export const useArtworksImages = defineBasicLoader(
-  '/art-gallery/search',
+// not used in this page
+const useArtworksImages = defineBasicLoader(
+  '/data-loaders/art-gallery/search',
   async () => {
     const searchResults = await useArtworksSearchResults()
     const images = new Map<number, string | null>()
@@ -83,22 +85,7 @@ const searchText = ref<string>(searchQuery.value || '')
 
 const { data: searchResults, isLoading, error } = useArtworksSearchResults()
 
-const images = shallowReactive(new Map<number, string | null>())
-
-watch(
-  searchResults,
-  async (results) => {
-    const imagesToFetch = Array.from(
-      new Set<number>(results.data.map((artwork) => artwork.id)),
-    ).filter((id) => !images.has(id))
-    const imageURLs = await getArtworkImagesURL(imagesToFetch)
-
-    for (const { id, image_url } of imageURLs) {
-      images.set(id, image_url)
-    }
-  },
-  { immediate: true },
-)
+// const { data: images } = useArtworksImages()
 
 function submitSearch() {
   searchQuery.value = searchText.value
@@ -107,6 +94,10 @@ function submitSearch() {
 </script>
 
 <template>
+  <blockquote v-if="error">
+    <strong>Error: </strong> <span>{{ error.message }}</span>
+  </blockquote>
+
   <form class="space-x-2" @submit.prevent="submitSearch()">
     <input v-model="searchText" type="text" />
     <button>Search</button>
@@ -126,11 +117,19 @@ function submitSearch() {
         v-for="artwork in searchResults.data"
         :id="`${artwork.title}_${artwork.id}`"
         :key="artwork.id"
-        :to="{ name: '/art-gallery/artwork.[id]', params: { id: artwork.id } }"
+        :to="{
+          name: '/data-loaders/art-gallery/artwork.[id]',
+          params: { id: artwork.id },
+        }"
         class="item"
       >
         <figure :title="artwork.title">
           <div v-if="artwork.thumbnail" class="img-loader item__content">
+            <!-- <img
+              v-if="images.has(artwork.id)"
+              class="full-res"
+              :src="images.get(artwork.id)!"
+            /> -->
             <img
               v-if="artwork.image_url"
               class="full-res"
