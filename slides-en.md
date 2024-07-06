@@ -1,9 +1,9 @@
 ---
 theme: '@posva/slidev-theme'
-title: 数据加载器 | 提升 Vue 中的数据获取
+title: Data Loaders | Elevating Data Fetching in Vue
 info: |
-  ## 数据加载器
-  提升 Vue 中的数据获取
+  ## Data Loaders
+  Elevating Data Fetching in Vue
 
   Copyright 2024-present Eduardo San Martin Morote
 class: text-center
@@ -20,9 +20,9 @@ mdc: true
 
 <span class="my-0 font-serif text-4xl font-bold">Eduardo San Martin Morote</span>
 <br>
-<span class="my-0 font-serif text-xl font-light">前端 Nerd</span>
+<span class="my-0 font-serif text-xl font-light">Frontend Nerd</span>
 <br>
-<span><logos-pinia />, <logos-vue /> Router, <img class="inline-block -translate-y-[5px]" style="height: 1.5em;" src="/vuefire.svg"> 作者</span>
+<span><logos-pinia />, <logos-vue /> Router, <img class="inline-block -translate-y-[5px]" style="height: 1.5em;" src="/vuefire.svg"> Author</span>
 
 </p>
 
@@ -31,10 +31,6 @@ mdc: true
 </div>
 
 <!--
-我是 Eduardo 也叫 posva，pinia 和 Vue Router 的作者。我正在学习中文但我说得还不是很好。谢谢，antfu，shengqingchuan, e0 的帮助。ppt是中文的但我会慢慢讲英文。
-
-Part of the core team for a long time, 7 years, or more. I've seen a lot of different patterns for Data Fetching.
-
 Eduardo, or posva on GitHub and Twitter. I'm the author of pinia, vue router, and other libraries. Part of the core team for a long time, 7 years, or more. I've seen a lot of different patterns for Data Fetching.
 -->
 
@@ -42,7 +38,7 @@ Eduardo, or posva on GitHub and Twitter. I'm the author of pinia, vue router, an
 layout: two-cols
 ---
 
-## 仅客户端数据获取
+## Client-only Data Fetching
 
 ````md magic-move
 
@@ -54,7 +50,7 @@ import { useRoute } from 'vue-router'
 const data = ref()
 const route = useRoute()
 watch(() => route.params.id, async (id) => {
-  data.value = await fetchSomeData(id) // 简单！
+  data.value = await fetchSomeData(id) // Simple!
 }, { immediate: true })
 </script>
 
@@ -72,7 +68,7 @@ import { ref, onMounted } from 'vue'
 import { useRoute } from 'vue-router'
 
 const data = ref()
-const isLoading = ref(false) // 加载状态
+const isLoading = ref(false) // Loading state
 const route = useRoute()
 watch(() => route.params.id, async (id) => {
   isLoading.value = true
@@ -96,7 +92,7 @@ import { useRoute } from 'vue-router'
 
 const data = ref()
 const isLoading = ref(false)
-const error = ref() // 错误状态
+const error = ref() // Error state
 const route = useRoute()
 watch(() => route.params.id, async (id) => {
   isLoading.value = true
@@ -124,27 +120,25 @@ watch(() => route.params.id, async (id) => {
 
 <v-clicks depth=2 at="-4">
 
-- 简单
-- 可定制
+- Simple
+- Customizable
 
 
 </v-clicks>
 
 <v-clicks at="+3">
 
-- 可使用组件数据 / 状态
-- 仅客户端
+- Can use component data
+- Client-only
 
 </v-clicks>
 
-<!--
-Client only data fetching
-
-- [click]Simple
-- [click]Customizable
-- [click][click][click]Can use components data (props, state)
-- [click]Client only
--->
+<!-- 
+Navigation: important for
+- Be able to control it, e.g. redirect user on unauthorized errors, Not Found pages
+- Integrate with metrics, analytics, etc
+- Native UI indicators of loading
+ -->
 
 ---
 layout: two-cols
@@ -191,10 +185,12 @@ Bad parts 👎
 - still not integrated in the navigation cycle
  -->
 
+<!-- ::right:: -->
+
 ```vue{*|3-4}
 <script setup>
 const route = useRoute()
-// 这只是 `await`
+// It's just await
 const data = await fetchSomeData(route.params.id)
 </script>
 
@@ -213,30 +209,21 @@ const data = await fetchSomeData(route.params.id)
 
 <v-clicks depth=2>
 
-- 简单直观
-- 无需路由
-- 依赖于组件挂载
-  - 瀑布式请求
-  - 没有预加载
-  - 无法监听路由变化
-  
+- Simple and intuitive
+- Works without the Router
+- Depends on Mounting
+  - Cascading fetching
+  - No preloading
+  - No route watching
+
 </v-clicks>
 
-<!--
-[click]
-- [click]Simple and intuitive
-- [click]Works without the Router
-- [click]Depends on Mounting
-  - [click]Cascading fetching
-  - [click]No preloading
-  - [click]No route watching
--->
 
 ---
 layout: two-cols
 ---
 
-## 使用 Composable
+## Using a composable
 
 ````md magic-move
 
@@ -244,7 +231,7 @@ layout: two-cols
 <script setup>
 import { useQuery } from '@tanstack/vue-query'
 
-// 缓存！
+// Cache!
 const { status, data, error } = useQuery({
   queryKey: ['some-key'],
   queryFn: fetchSomeData,
@@ -252,7 +239,7 @@ const { status, data, error } = useQuery({
 </script>
 
 <template>
-  <div v-if="status === 'loading'">加载中...</div>
+  <div v-if="status === 'loading'">Loading...</div>
   <div v-if="data">
     <h1>{{ data.title }}</h1>
     <p>{{ data.body }}</p>
@@ -265,17 +252,17 @@ const { status, data, error } = useQuery({
 import { useQuery } from '@tanstack/vue-query'
 import { onServerPrefetch } from 'vue'
 
-// 缓存！
+// Cache!
 const { status, data, error, suspense } = useQuery({
   queryKey: ['some-key'],
   queryFn: fetchSomeData,
 })
-// 处理 SSR
+// Handle SSR
 onServerPrefetch(() => suspense())
 </script>
 
 <template>
-  <div v-if="status === 'loading'">加载中...</div>
+  <div v-if="status === 'loading'">Loading...</div>
   <div v-if="data">
     <h1>{{ data.title }}</h1>
     <p>{{ data.body }}</p>
@@ -288,43 +275,42 @@ onServerPrefetch(() => suspense())
 
 <v-clicks depth=2>
 
-- 功能丰富
-  - 缓存
-  - 去重
-  - 持久化
-- 简洁
-- 支持 SSR
-
-</v-clicks>
-
-<!--
 - Feature rich
   - Cache
   - Deduplication
   - Persistence
 - Concise
 - Supports SSR
+
+</v-clicks>
+
+<!-- 
+- We can avoid suspense cascading
+- still not related from navigation
+- Heavy library. Could replace with pinia colada for most cases
+
+And there are other approaches to Data Fetching in Vue, for example in Nuxt you have other more lightweight solutions. But it allows me to say 2 things
 -->
 
 ---
 layout: two-cols
 ---
 
-## 导航守卫
+## Navigation guard
 
 ```ts{*|6-7|11-14}
 const router = createRouter({
-  // 其他选项...
+  // other options...
   routes: [{
     path: '/artwork/:id',
     component: () => import('@/pages/ArtworkDetail.vue'),
-    // 在 `meta` 中定义获取数据的逻辑
+    // Define fetch logic in `meta`
     meta: { data: (to) => getArtwork(to.params.id) },
   }],
 })
 
 router.beforeResolve(async to => {
-  // 获取并等待
+  // Fetch and await
   await to.meta.data?.(to)
 })
 ```
@@ -333,41 +319,29 @@ router.beforeResolve(async to => {
 
 <v-clicks at="1">
 
-- 定义自定义的 `meta` 属性
-- 在导航守卫中使用它
+- Define a custom `meta` property
+- Consume it in a navigation guard
 
 </v-clicks>
 
 <v-clicks>
 
-- 可以修改导航。例如：
-  - [404 Not Found]{.font-mono} → 显示错误
-  - [403 Forbidden]{.font-mono} → 重定向到 `/login`
-- 导航相关的性能指标/行为分析
-- 浏览器 UI 加载状态
-- 无法使用组件数据
-- 需要一个 Store
+- Can modify the navigation
+  - [404 Not Found]{.font-mono}: store error
+  - [403 Forbidden]{.font-mono}: Redirect to `/login`
+- Metrics/Analytics around navigation
+- Browser UI loading state
+- Can't use component data
+- Requires a Store
 
 </v-clicks>
-
-<!--
-Navigation Guard
-
-- [click]Can modify the navigation
-  - [click][404 Not Found]{.font-mono}: store error
-  - [click][403 Forbidden]{.font-mono}: Redirect to `/login`
-- [click]Metrics/Analytics around navigation
-- [click]Browser UI loading state
-- [click]Can't use component data
-- [click]Requires a Store
--->
 
 ---
 layout: cover
 class: text-center
 ---
 
-# 数据获取是<span v-mark.underline.red="{ strokeWidth: 12 }">**复杂的**</span>
+# Data Fetching is <span v-mark.underline.red="{ strokeWidth: 12 }">**Complex**</span>
 
 <!-- 
 Complex topic, lots of ways to handle. Almost every application needs it.
@@ -381,7 +355,8 @@ class: text-center
 
 <!-- # <span class="font-thin">There is<br><span v-mark.underline.red="{ strokeWidth: 12 }">no <span class="font-medium">standard</span> way</span></span> -->
 
-# 没有<span v-mark.underline.red="{ strokeWidth: 12 }">标准方式</span>
+# There is
+# <span v-mark.underline.red="{ strokeWidth: 12 }">no standard way</span>
 
 <!-- 
 
@@ -392,11 +367,11 @@ layout: cover
 class: text-center font-thin
 ---
 
-# 代码放在一起<br>+<br>导航感知
+# Code Collocation<br>+<br>Navigation Aware
 
 <v-clicks>
 
-###### 这真的可能吗？
+###### Is it even possible?
 
 </v-clicks>
 
@@ -405,9 +380,9 @@ layout: cover
 class: text-center
 ---
 
-# 数据加载器
+# Data Loaders
 
-###### 标准化数据获取
+###### Standarizing Data Fetching
 
 <!--
 
@@ -415,9 +390,9 @@ class: text-center
 
 ---
 
-## 什么是数据加载器
+## What are Data Loaders
 
-Vue 插件中的**导航守卫** + `defineLoader()`
+A **Navigation Guard** in a Vue Plugin + `defineLoader()`
 
 ```ts{*|2,6-8}
 import { createApp } from 'vue'
@@ -425,27 +400,10 @@ import { DataLoaderPlugin } from 'unplugin-vue-router/data-loaders'
 import { router } from './router'
 
 const app = createApp({})
-// 将 Router 实例和其他可选项传递给插件
+// Pass the Router instance and other optional
+// options to the plugin
 app.use(DataLoaderPlugin, { router })
 ```
-
-<v-click>
-
-```vue
-<script lang="ts">
-export const useUserData = defineLoader(async (to) => {
-  // ...
-})
-</script>
-```
-
-</v-click>
-
-<!--
-What are Data loaders
-
-A **Navigation Guard** in a Vue Plugin + `defineLoader()`
--->
 
 ---
 layout: two-cols
@@ -453,13 +411,14 @@ layout: two-cols
 
 # `defineLoader()`
 
-```vue{*|1,12|4-9|4,18|12-17|13|14|15|16}
+```vue{*|1,12|4-9|4,18|13-18|8,14|15|16|17}
 <script lang="ts">
 import { getUserById } from '../api'
 
 export const useUserData = defineLoader(async (route) => {
-  // 用于获取的所有内容都应该在 URL 中
+  // everything used to fetch should be in the URL
   const user = await getUserById(route.params.id)
+  // return anything you want to expose
   return user
 })
 </script>
@@ -469,7 +428,7 @@ const {
   data: user, // 👆 `user`
   isLoading, // true/false
   error,
-  reload, // 手动刷新 ⚡️
+  reload, // manually fetch again ⚡️
 } = useUserData()
 </script>
 ```
@@ -478,68 +437,61 @@ const {
 
 <div v-if="$clicks === 1">
 
-`<script>` and `<script setup>`
+Two `<script>`
 
 </div>
 <div v-else-if="$clicks === 2">
 
-- 异步函数
-- `to` 应该包含获取所需的所有内容
-- 返回要公开的内容
+- Async Function
+- `to` should contain everything needed to fetch
+- Return what you want to expose
 
 </div>
 <div v-else-if="$clicks === 3">
 
-- `defineLoader()` 返回一个 _Composable_
-- **导出** _Composable_
-- 在任何地方使用它
+- `defineLoader()` returns a _composable_
+- **Export** the _composable_
+- Use it **anywhere**
 
 </div>
 <div v-else-if="$clicks === 5">
 
-`data` 是返回的值
+`data` is the returned value
 
 </div>
 <div v-else-if="$clicks === 6">
 
-`isLoading` 在加载时设置为 true
+`isLoading` is set to true while the loader is pending
 
 </div>
 <div v-else-if="$clicks === 7">
 
-`error` 即是 _预期内的_ 错误。稍后会详细介绍 👀
+`error` gives access to _expected_ errors. More about that later 👀
 
 </div>
 <div v-else-if="$clicks === 8">
 
-`reload` 允许你手动刷新数据，但不触发导航
+`reload` allows you to manually refresh the data without a navigation
 
 </div>
 
-<!--
-- [click] 2 scripts: disconnect load from mount
-- [click]Async Function
-- `to` should contain everything needed to fetch
-- Return what you want to expose
-- [click]`defineLoader()` returns a _composable_
-- **Export** the _composable_
-- Use it **anywhere**[click]
-- [click]`data` is the returned value
-- [click]`isLoading` is set to true while the loader is pending
-- [click]`error` gives access to _expected_ errors. More about that later 👀
-- [click]`reload` allows you to manually refresh the data without a navigation
--->
 
+
+<!-- 
+- [click] 2 scripts: disconnect load from mount
+- [click] Function access to the route. Everything
+ -->
+ 
 ---
 
-## 导航感知
+## Navigation Aware
 
 ````md magic-move
 ```vue{3-6}
 <script lang="ts">
 export const useUserData = defineLoader(async (route) => {
-  // 如果抛出错误，将取消导航
-  // 就像在导航守卫中返回 '/login' 等效
+  // if it throws it cancels the navigation
+  // just like in a navigation guard
   const user = await getUserById(route.params.id)
   return user
 })
@@ -559,11 +511,11 @@ export const useUserData = defineLoader(async (route) => {
     return await getUserById(route.params.id)
   } catch (err) {
     if (err.status === 403) {
-      // 控制导航
-      // 与在导航守卫中返回 '/login' 等效
+      // Control the navigation
+      // Same as returning '/login' in a navigation guard
       throw new NavigationResult('/login')
     }
-    throw err // 未处理的错误
+    throw err // Unhandled error
   }
 })
 </script>
@@ -576,56 +528,38 @@ const { data: user, isLoading, error, reload } = useUserData()
 
 <v-clicks>
 
-导航感知不只是 _拦截导航_。
+Navigation Aware is not just _blocking the navigation_.
 
 </v-clicks>
 
-<!--
-Navigation Aware
-
-if it throws it cancels the navigation
-just like in a navigation guard
-[click]
-
-- Control the navigation
-- Same as returning '/login' in a navigation guard
-- Unhandled Error
-
-[click]Navigation Aware is not just _blocking the navigation_.
--->
-
+<!-- 
+Since the
+ -->
+ 
 ---
 
-## 数据更新的一致性
+## Consistent partial updates
 
-在阻塞加载器中：数据在导航后更新
+In blocking Loaders: data updates after navigation
 
 <v-click>
 
-懒加载器会**立即**更新，因为它们不会感知导航。
+Lazy loaders _immediately_ update since they are not navigation aware.
 
 </v-click>
-
-<!--
-Consistent partial updates
-
-- In blocking Loaders: data updates after navigation
-- [click]Lazy loaders _immediately_ update since they are not navigation aware.
--->
 
 ---
 layout: iframe
 url: http://localhost:5173/inconsistent-state
 ---
 
-<!-- Show code after each example -->
-
 ---
 
-## 非阻塞的懒加载器
+
+## Non blocking "lazy" loaders
 
 ````md magic-move
-```vue{2-5}
+```vue{2-7}
 <script lang="ts">
 export const useUserData = defineLoader(async (route) => {
   const user = await getUserById(route.params.id)
@@ -638,13 +572,13 @@ const { data: user, isLoading, error, reload } = useUserData()
 </script>
 ```
 
-```vue{5-7}
+```vue{7-9}
 <script lang="ts">
 export const useUserData = defineLoader(async (route) => {
   const user = await getUserById(route.params.id)
   return user
 }, {
-  lazy: true, // 不阻塞导航
+  lazy: true, // do not await this during navigation
 })
 </script>
 
@@ -656,25 +590,18 @@ const { data: user, isLoading, error, reload } = useUserData()
 
 <v-clicks>
 
-- 随导航触发但是不阻塞
-- 不能拦截导航
-- 所有抛出的错误都在 error 上
+- It's triggered during navigation but not awaited
+- Cannot control the navigation
+- Any thrown error will appear in `error`
 
 </v-clicks>
 
-<!-- 
-Not blocking the navigation
-[click]
-- [click]It's triggered during navigation but not awaited
-- [click]Cannot control the navigation
-- [click]Any thrown error will appear in `error`
- -->
 
 ---
 layout: two-cols
 ---
 
-## 为什么使用懒加载器
+## Why "lazy" loaders
 
 ```vue{*|2-4,6-9|13|15}
 <script lang="ts">
@@ -684,7 +611,7 @@ export const useArtworkDetails = defineLoader(
 
 export const useArtworkRelatedArtists = defineLoader(
   (to) => getRelatedArtists(to.params.id),
-  { lazy: true }, // 我们不阻塞导航
+  { lazy: true }, // We can let the navigation happen
 )
 </script>
 
@@ -701,43 +628,34 @@ const {
 
 <div v-if="$clicks === 1">
 
-- Artwork Details 是关键的
-- Related artwork 不是
+- Artwork Details is critical
+- Related artwork is not
 
 </div>
 <div v-else-if="$clicks === 2">
 
-Artwork `data` 总是存在  
+Artwork `data` is always defined
 
 </div>
 <div v-else-if="$clicks === 3">
 
-Related Artists `data` 通常为 `undefined`
+Related Artists `data` will usually be `undefined`
 
 </div>
 
-<!--
-Why "lazy" loaders: it allows us to not block the whole page for less important data.
-
-- [click]Artwork Details is critical
-- Related artwork is not
-- [click]Artwork `data` is always defined
-- [click]Related Artists `data` will usually be `undefined`
--->
-
 ---
 
-## 错误管理
+## Error Management
 
-定义 _预期_ 错误以**不取消**导航
+Define _expected_ errors to **not cancel** the navigation
 
 ```vue{*|5-7|13}
 <script lang="ts">
 export const useArtworkDetails = defineLoader(
  (to) => getArtwork(to.params.id),
  {
-  // MyCustomError 实例将出现在 `error` 中
-  // 而不会取消导航
+  // MyCustomError instances will appear in `error`
+  // without blocking the navigation
   errors: { MyCustomError }
  }
 )
@@ -750,25 +668,15 @@ const { data: artwork, status, error } = useArtworkDetails()
 
 <v-clicks>
 
-在本地处理错误
+Handle the error locally
 
 </v-clicks>
 
-<!--
-Error management
-
-- Define _expected_ errors to **not cancel** the navigation
-
-- [click]MyCustomError instances will appear in `error` without blocking the navigation
-- Then we get it with data, and other
-- [click]Handle the error locally which is sometimes more convenient that handling it globally. But the important part is that we can do both
--->
-
 ---
 
-## 就这些吗？
+## What about extra features?
 
-缓存，持久化，???
+Cache, persistance, ???
 
 ````md magic-move
 ```vue{*|2}
@@ -819,7 +727,7 @@ import { defineColadaLoader } from 'unplugin-vue-router/data-loaders/colada'
 export const useArtworkDetails = defineColadaLoader({
   key: (to) => ['artwork', to.params.id],
   query: (to) => getArtwork(to.params.id),
-  staleTime: 1000 * 60 * 5, // 数据在5分钟内是新鲜的
+  staleTime: 1000 * 60 * 5, // Data is fresh for 5 minutes
 })
 </script>
 
@@ -835,7 +743,7 @@ import { defineColadaLoader } from 'unplugin-vue-router/data-loaders/colada'
 export const useArtworkDetails = defineColadaLoader({
   key: (to) => ['artwork', to.params.id],
   query: (to) => getArtwork(to.params.id),
-  staleTime: 1000 * 60 * 5, // 数据在5分钟内是新鲜的
+  staleTime: 1000 * 60 * 5, // Data is fresh for 5 minutes
 })
 </script>
 
@@ -844,51 +752,31 @@ const {
   data: artwork,
   status,
   error,
-  refresh, // 只在需要时刷新数据
+  refresh, // Refresh the data only if needed
 } = useArtworkDetails()
 </script>
 ```
 ````
 
-<!--
-Is that all, what about cache and other cool features we talked about before
-
-- Cache, persistance, ???
-- [click]defineLoader doesn't exist
-- [click] the real name is defineBasicLoader because it only implements the basic set of features I showed you
-- [click][click][click] Specific option, only for this loader
-- [click]Data is fresh for 5 minutes
-- [click]Refresh the data only if needed
--->
-
 ---
 
-## `defineLoader()` 是一个规范
+## `defineLoader()` is a spec
 
-现有的实现:
+Existing:
 
-- 最基本的实现: `defineBasicLoader()`
-- Pinia Colada 集成: `defineColadaLoader()`
+- Bare minimum implementation: `defineBasicLoader()`
+- Pinia Colada integration: `defineColadaLoader()`
 
 <v-click>
 
-潜在的未来实现:
+Potential future implementations:
 
 - Vue Query: `defineQueryLoader()`
-- WebSockets `defineWebSocketLoader()`
+- Websockets `defineWebSocketLoader()`
 - GraphQL `defineGraphQLLoader()`
 - VueFire `defineFirestoreLoader()`
 
 </v-click>
-
-<!--
-It's a spec
-
-existing loaders
-
-- Bare minimum implementation: `defineBasicLoader()`
-- Pinia Colada integration: `defineColadaLoader()`
--->
 
 ---
 layout: cover
@@ -898,11 +786,6 @@ layout: cover
 
 <img src="/pina-colada.jpeg" class="mx-auto max-h-96">
 
-<!--
-what is pinia colada
-originally a cocktail but here
--->
-
 ---
 layout: cover
 transition: view-transition
@@ -911,10 +794,6 @@ transition: view-transition
 # [Pinia Colada]{.inline-block.view-transition-title}
 
 <img src="/pinia-colada.png" class="mx-auto max-h-96 view-transition-image">
-
-<!--
-a library
--->
 
 ---
 layout: two-cols
@@ -926,55 +805,30 @@ layout: two-cols
 
 ::right::
 
-Pinia 的异步状态管理层
+Async State management layer for Pinia
 
-缓存，缓存失效，去重，插件，...
+Cache, cache invalidation, deduplication, plugins, ...
 
-**仍在开发中**
+**Still work in progress**
 
 - <carbon-logo-github /> [posva/pinia-colada]{.font-mono}
 - 📚 [https://pinia-colada.esm.dev](https://pinia-colada.esm.dev/)
 
-<!--
-- Async State management layer for Pinia
-- Cache, cache invalidation, deduplication, plugins, ...
-- **Still work in progress**
--->
-
 ---
 layout: iframe
-url: http://localhost:5173/data-loaders/art-gallery/search
+url: https://uvr.esm.is/rfcs/data-loaders/
 ---
-
-<!-- 
-Show how fast to navigate
- -->
 
 ---
 
-# 数据加载器
+# Data Loaders
 
-目标:
+Goals:
 
-- 导航感知
-  - 可以阻止导航直到数据准备好
-  - 可以更改或中止导航
-- 与页面组件共存
-- 可扩展
-- 高性能
-  - 请求和数据访问去重
-  - 默认并行
-  - 需要时顺序执行
-- 一致的更新
-  - 保留旧数据直到导航解析完成
-  - 所有数据同时更新
-
-<!--
 - Navigation Aware
   - _Can_ block navigation until data is ready
   - _Can_ change or abort the navigation
 - Collocated with page components
-- Extendable
 - Performant
   - Deduplicate requests and data access
   - Parallel by default
@@ -982,26 +836,24 @@ Show how fast to navigate
 - Consistent updates
   - Keep old data until navigation is resolved
   - All data is updated at once
--->
 
----
-layout: iframe
-url: https://uvr.esm.is/rfcs/data-loaders/
----
-
-<!-- if you are interested -->
+<!--
+- Delay data updates until **all data loaders resolve**
+- Rollback if any fails
+- Avoid displaying an old page with new data
+ -->
 
 ---
 layout: cover
 ---
 
-# 链接
+# Links
 
 - [<logos-vue /> unplugin-vue-router](https://github.com/posva/unplugin-vue-router)
-- [数据加载器 RFC](https://uvr.esm.is/rfcs/data-loaders/)
+- [Data Loaders RFC](https://uvr.esm.is/rfcs/data-loaders/)
 - [🍹 Pinia Colada](https://github.com/posva/pinia-colada)
-- [ 幻灯片 + 演示 <carbon-logo-github /><span class="font-mono">posva/data-loaders</span>](https://github.com/posva/data-loaders)
-- [❤️ 赞助我](https://esm.dev/open-source)
+- [ Slides + demo <carbon-logo-github /><span class="font-mono">posva/data-loaders</span>](https://github.com/posva/data-loaders)
+- [❤️ Sponsor me](https://esm.dev/open-source)
 
 <!--
 - Show project index, it shows artwork
@@ -1061,4 +913,4 @@ layout: cover
 layout: cover
 ---
 
-# 谢谢!
+# Thanks!
