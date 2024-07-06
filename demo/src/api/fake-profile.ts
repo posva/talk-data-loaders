@@ -25,7 +25,7 @@ export async function getProfileInfo(id: string) {
 }
 
 export async function getFollowerCount(id: string) {
-  await delay(3000)
+  await delay(5000)
   if (id in followerCount) {
     return followerCount[id as keyof typeof followerCount]
   }
