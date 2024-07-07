@@ -1,9 +1,14 @@
-# Welcome to [Slidev](https://github.com/slidevjs/slidev)!
+# Data Loaders Talk
+
+- [Playground Demo](https://data-loaders-demo.netlify.app)
+- [Slides](https://data-loaders.netlify.app/)
+
+## Commands
 
 To start the slide show:
 
-- `npm install`
-- `npm run dev`
+- `pnpm install`
+- `pnpm run dev`
 - visit http://localhost:3030
 
 Edit the [slides.md](./slides.md) to see the changes.
