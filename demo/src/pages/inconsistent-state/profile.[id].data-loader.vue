@@ -6,8 +6,9 @@ export const useProfileInfo = defineBasicLoader(
   '/inconsistent-state/profile.[id].data-loader',
   (to) => getProfileInfo(to.params.id),
   {
-    // commit: 'immediate',
-  }
+    commit: 'after-load',
+    lazy: true,
+  },
 )
 
 export const useFollowerCount = defineBasicLoader(
@@ -39,7 +40,7 @@ const { data: profileInfo, isLoading } = useProfileInfo()
     <template v-if="isLoading && !profileInfo">
       <p>Loading profile...</p>
     </template>
-    <template v-else>
+    <template v-else-if="profileInfo">
       <img :src="profileInfo.imageURL" class="w-48 rounded-full" />
       <p class="text-lg font-bold">{{ profileInfo.name }}</p>
       <p class="text-sm font-thin">
