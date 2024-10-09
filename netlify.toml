@@ -11,6 +11,16 @@ status = 200
 to = "/.well-known/:splat"
 
 [[redirects]]
+from = "/zh"
+status = 200
+to = "/zh/index.html"
+
+[[redirects]]
+from = "/zh/*"
+status = 200
+to = "/zh/index.html"
+
+[[redirects]]
 from = "/*"
 status = 200
 to = "/index.html"
