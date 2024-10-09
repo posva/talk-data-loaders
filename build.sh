@@ -1,12 +1,10 @@
 #!/usr/bin/env bash
 
-pnpm exec slidev build slides-en.md
-mv dist .output
+rm -rf dist
 
-pnpm exec slidev build slides-zh.md
-mv dist .output/zh
+pnpm exec slidev build slides-en.md --base / --out dist
 
-# pnpm exec slidev build slides-jp.md
-# mv dist .output/jp
+pnpm exec slidev build slides-zh.md --base /zh/ --out dist/zh
 
-mv .output dist
+rm dist/_redirects
+rm dist/zh/_redirects
