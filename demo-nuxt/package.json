@@ -10,11 +10,10 @@
     "postinstall": "nuxt prepare"
   },
   "dependencies": {
-    "@pinia/colada": "^0.6.0"
+    "pinia": "^2.2.4"
   },
   "devDependencies": {
-    "@pinia/nuxt": "^0.5.1",
-    "nuxt": "^3.12.2",
-    "unplugin-vue-router": "^0.10.0"
+    "@pinia/nuxt": "^0.5.5",
+    "nuxt": "^3.13.2"
   }
 }

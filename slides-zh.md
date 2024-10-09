@@ -16,7 +16,7 @@ mdc: true
 
 <img class="w-32 h-32 mb-4 rounded-full" src="/posva.jpeg" alt="eduardo avatar">
 
-<p class="text-left">
+<div class="text-left">
 
 <span class="my-0 font-serif text-4xl font-bold">Eduardo San Martin Morote</span>
 <br>
@@ -24,7 +24,7 @@ mdc: true
 <br>
 <span><logos-pinia />, <logos-vue /> Router, <img class="inline-block -translate-y-[5px]" style="height: 1.5em;" src="/vuefire.svg"> 作者</span>
 
-</p>
+</div>
 
 <span><carbon-logo-github /> <carbon-logo-x /> as [@posva]{.font-mono}</span>
 

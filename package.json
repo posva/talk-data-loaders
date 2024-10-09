@@ -1,16 +1,16 @@
 {
   "name": "talk-data-loaders",
   "type": "module",
-  "packageManager": "pnpm@9.4.0",
+  "packageManager": "pnpm@9.12.0",
   "private": true,
   "scripts": {
-    "build": "slidev build",
-    "dev": "slidev --open",
-    "export": "slidev export"
+    "build": "./build.sh",
+    "dev": "slidev --open slides-en.md"
   },
   "dependencies": {
+    "@pinia/colada": "latest",
     "@posva/slidev-theme": "^0.1.0",
-    "@slidev/cli": "^0.49.12",
-    "vue": "^3.4.30"
+    "@slidev/cli": "^0.49.29",
+    "vue": "^3.5.11"
   }
 }
