@@ -614,8 +614,8 @@ Consistent partial updates
 -->
 
 ---
-layout: iframe
-url: http://localhost:5173/inconsistent-state
+layout: demo-iframe
+url: /inconsistent-state
 ---
 
 <!-- Show code after each example -->
@@ -986,7 +986,7 @@ Show how fast to navigate
 
 ---
 layout: iframe
-url: https://uvr.esm.is/rfcs/data-loaders/
+url: https://uvr.esm.is/data-loaders/
 ---
 
 <!-- if you are interested -->
@@ -1000,7 +1000,7 @@ layout: cover
 - [<logos-vue /> unplugin-vue-router](https://github.com/posva/unplugin-vue-router)
 - [数据加载器 RFC](https://uvr.esm.is/rfcs/data-loaders/)
 - [🍹 Pinia Colada](https://github.com/posva/pinia-colada)
-- [ 幻灯片 + 演示 <carbon-logo-github /><span class="font-mono">posva/data-loaders</span>](https://github.com/posva/data-loaders)
+- [幻灯片 + 演示 <carbon-logo-github /><span class="font-mono">posva/data-loaders</span>](https://github.com/posva/data-loaders)
 - [❤️ 赞助我](https://esm.dev/open-source)
 
 <!--

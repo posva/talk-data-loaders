@@ -16,7 +16,7 @@ mdc: true
 
 <img class="w-32 h-32 mb-4 rounded-full" src="/posva.jpeg" alt="eduardo avatar">
 
-<p class="text-left">
+<div class="text-left">
 
 <span class="my-0 font-serif text-4xl font-bold">Eduardo San Martin Morote</span>
 <br>
@@ -24,13 +24,15 @@ mdc: true
 <br>
 <span><logos-pinia />, <logos-vue /> Router, <img class="inline-block -translate-y-[5px]" style="height: 1.5em;" src="/vuefire.svg"> Author</span>
 
-</p>
+</div>
 
 <span><carbon-logo-github /> <carbon-logo-x /> as [@posva]{.font-mono}</span>
 
 </div>
 
 <!--
+Hello everyone! I'm Eduardo, or posva on GitHub and Twitter. I'm the author of pinia, Vue Router, and other vue-related libraries like VueFire.
+I have been part of the core team for a very long time, 7 years, maybe more. I've seen a lot of different patterns for Data Fetching.  
 Eduardo, or posva on GitHub and Twitter. I'm the author of pinia, vue router, and other libraries. Part of the core team for a long time, 7 years, or more. I've seen a lot of different patterns for Data Fetching.
 -->
 
@@ -549,12 +551,9 @@ Lazy loaders _immediately_ update since they are not navigation aware.
 </v-click>
 
 ---
-layout: iframe
-url: http://localhost:5173/inconsistent-state
+layout: demo-iframe
+url: /inconsistent-state
 ---
-
----
-
 
 ## Non blocking "lazy" loaders
 
@@ -816,7 +815,7 @@ Cache, cache invalidation, deduplication, plugins, ...
 
 ---
 layout: iframe
-url: https://uvr.esm.is/rfcs/data-loaders/
+url: https://uvr.esm.is/data-loaders/
 ---
 
 ---
@@ -852,8 +851,18 @@ layout: cover
 - [<logos-vue /> unplugin-vue-router](https://github.com/posva/unplugin-vue-router)
 - [Data Loaders RFC](https://uvr.esm.is/rfcs/data-loaders/)
 - [🍹 Pinia Colada](https://github.com/posva/pinia-colada)
-- [ Slides + demo <carbon-logo-github /><span class="font-mono">posva/data-loaders</span>](https://github.com/posva/data-loaders)
+- [Slides + demo <carbon-logo-github /><span class="font-mono">posva/data-loaders</span>](https://github.com/posva/data-loaders)
 - [❤️ Sponsor me](https://esm.dev/open-source)
+
+---
+
+TODO: Mastering Pinia Course
+
+<!-- 
+
+ -->
+
+---
 
 <!--
 - Show project index, it shows artwork
