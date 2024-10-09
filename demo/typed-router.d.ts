@@ -23,6 +23,7 @@ declare module 'vue-router/auto-routes' {
     '/data-loaders/art-gallery/': RouteRecordInfo<'/data-loaders/art-gallery/', '/data-loaders/art-gallery', Record<never, never>, Record<never, never>>,
     '/data-loaders/art-gallery/artwork.[id]': RouteRecordInfo<'/data-loaders/art-gallery/artwork.[id]', '/data-loaders/art-gallery/artwork/:id', { id: ParamValue<true> }, { id: ParamValue<false> }>,
     '/data-loaders/art-gallery/search': RouteRecordInfo<'/data-loaders/art-gallery/search', '/data-loaders/art-gallery/search', Record<never, never>, Record<never, never>>,
+    '/inconsistent-state': RouteRecordInfo<'/inconsistent-state', '/inconsistent-state', Record<never, never>, Record<never, never>>,
     '/inconsistent-state/': RouteRecordInfo<'/inconsistent-state/', '/inconsistent-state', Record<never, never>, Record<never, never>>,
     '/inconsistent-state/profile.[id].client-side': RouteRecordInfo<'/inconsistent-state/profile.[id].client-side', '/inconsistent-state/profile/:id/client-side', { id: ParamValue<true> }, { id: ParamValue<false> }>,
     '/inconsistent-state/profile.[id].data-loader': RouteRecordInfo<'/inconsistent-state/profile.[id].data-loader', '/inconsistent-state/profile/:id/data-loader', { id: ParamValue<true> }, { id: ParamValue<false> }>,

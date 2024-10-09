@@ -25,8 +25,11 @@ watch(
       :to="{
         params: { id: route.params.id === 'posva' ? 'yyx990803' : 'posva' },
       }"
-      >My profile</RouterLink
     >
+      → Go to {{ route.params.id === 'posva' ? 'yyx990803' : 'posva' }}'s profile
+    </RouterLink>
+
+    <br />
     <br />
 
     <template v-if="isLoading">

@@ -1,7 +1,7 @@
 <template>
   <nav>
     <RouterLink :to="{ name: '/data-loaders/art-gallery/search' }"
-      >Data Loaders</RouterLink
+      >Art Gallery</RouterLink
     >
     |
     <RouterLink :to="{ name: '/inconsistent-state/' }"

@@ -32,9 +32,11 @@ const { data: profileInfo, isLoading } = useProfileInfo()
       :to="{
         params: { id: route.params.id === 'posva' ? 'yyx990803' : 'posva' },
       }"
-      v-slot="{ href }"
-      >{{ href }}</RouterLink
     >
+      → Go to {{ route.params.id === 'posva' ? 'yyx990803' : 'posva' }}'s profile
+    </RouterLink>
+
+    <br />
     <br />
 
     <template v-if="isLoading && !profileInfo">

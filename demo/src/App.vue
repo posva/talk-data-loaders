@@ -9,7 +9,7 @@ const areSettingsOpen = useLocalStorage('settings-open', true)
 
 <template>
   <header>
-    <h1>Art Gallery</h1>
+    <h1>Data Loaders demos</h1>
     <NavBar />
   </header>
 
