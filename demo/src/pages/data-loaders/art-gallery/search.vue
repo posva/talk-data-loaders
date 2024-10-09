@@ -1,7 +1,7 @@
 <script lang="ts">
 import { defineBasicLoader } from 'unplugin-vue-router/data-loaders/basic'
 import { getArtworkImagesURL, searchArtworks } from '@/api/aic'
-import { NavigationResult } from 'vue-router/auto'
+import { NavigationResult } from 'unplugin-vue-router/data-loaders'
 import { useRouteQuery } from '@/composables/router'
 import { defineColadaLoader } from 'unplugin-vue-router/data-loaders/pinia-colada'
 import { parsePageQuery, parseQuerySearch } from '@/utils'

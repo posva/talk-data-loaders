@@ -1,6 +1,6 @@
 import { useSessionStorage } from '@vueuse/core'
 import { mande } from 'mande'
-import { reactive, ref } from 'vue'
+import { reactive } from 'vue'
 import type { LocationQueryValueRaw } from 'vue-router'
 
 const artworks = mande('https://api.artic.edu/api/v1/artworks')
