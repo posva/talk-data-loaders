@@ -5,10 +5,6 @@ import { getFollowerCount, getProfileInfo } from '@/api/fake-profile'
 export const useProfileInfo = defineBasicLoader(
   '/inconsistent-state/profile.[id].data-loader',
   (to) => getProfileInfo(to.params.id),
-  {
-    commit: 'after-load',
-    lazy: true,
-  },
 )
 
 export const useFollowerCount = defineBasicLoader(
