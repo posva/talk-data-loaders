@@ -32,8 +32,8 @@ mdc: true
 
 <!--
 Hello everyone! I'm Eduardo, or posva on GitHub and Twitter. I'm the author of pinia, Vue Router, and other vue-related libraries like VueFire.
-I have been part of the core team for a very long time, 7 years, maybe more. I've seen a lot of different patterns for Data Fetching.  
-Eduardo, or posva on GitHub and Twitter. I'm the author of pinia, vue router, and other libraries. Part of the core team for a long time, 7 years, or more. I've seen a lot of different patterns for Data Fetching.
+I have been part of the core team for a very long time, 7 years, maybe more. During this journey I have encountered many different problems and I have tried to solve most of them.
+Except for one, Data Fetching. Data fetching can be very simple.
 -->
 
 ---
@@ -132,15 +132,27 @@ watch(() => route.params.id, async (id) => {
 
 - Can use component data
 - Client-only
+- Verbose
 
 </v-clicks>
 
 <!-- 
-Navigation: important for
-- Be able to control it, e.g. redirect user on unauthorized errors, Not Found pages
-- Integrate with metrics, analytics, etc
-- Native UI indicators of loading
- -->
+If your application is Client-only, using a `watch` is a simple and effective way to fetch data.
+On top of that, it's easy to customize:
+
+- We can add loading state
+- Error handling
+
+This is because we are in the component itself, we can use the component data and we don't need to learn anything new in Vue.
+
+It has two major downsides:
+
+- It's quite verbose
+- It's client-only. You can't do SSR with this approach because the data fetching only happens when the component is mounted and is not awaited when rendering the page on the server
+
+For most projects, this is fine: they don't need SSR after all. But what if you do?
+
+-->
 
 ---
 layout: two-cols
@@ -148,44 +160,6 @@ layout: two-cols
 
 ## Suspense
 
-<!-- Good parts 👍
-
-- Easy, intuitive, collocated with the page component
-- _Extendable_ through composables
-
-<v-clicks>
-
-- SSR (with store)
-- **Initial** navigation integration
-
-</v-clicks>
-
-<v-click>
-
-Bad parts 👎
-
-</v-click>
-
-<v-clicks>
-
-- No local state (loading, error)
-- Everything depends on _mounting_ the component
-  - Cascading fetching
-  - No preloading
-  - No update if params change
-
-</v-clicks> -->
-
-<!-- 
-- SSR we still need to serialize data to the client
-- With SSR, the page is rendered and the fetching is awaited on the server. Subsequent navigations are client-side only. The update of the URL and the navigation itself is not blocked by the fetching.
-- Error/loading state only on parent component
-- the fetching happens when mounting the component
-- Nested comp that fetches, starts fetching after the parent has fetched. No parallel fetching, slower applications
-- No way to only fetch the data. We need to mount
-- Can't update without mounting again or adding extra code to handle the update
-- still not integrated in the navigation cycle
- -->
 
 <!-- ::right:: -->
 
@@ -216,10 +190,23 @@ const data = await fetchSomeData(route.params.id)
 - Depends on Mounting
   - Cascading fetching
   - No preloading
-  - No route watching
+  - No watching (no automatic refetch)
 
 </v-clicks>
 
+<!--
+
+You can rely on `<Suspense>`
+
+- SSR we still need to serialize data to the client
+- With SSR, the page is rendered and the fetching is awaited on the server. Subsequent navigations are client-side only. The update of the URL and the navigation itself is not blocked by the fetching.
+- Error/loading state only on parent component
+- the fetching happens when mounting the component
+- Nested comp that fetches, starts fetching after the parent has fetched. No parallel fetching, slower applications
+- No way to only fetch the data. We need to mount
+- Can't update without mounting again or adding extra code to handle the update
+- still not integrated in the navigation cycle
+-->
 
 ---
 layout: two-cols
@@ -329,7 +316,7 @@ router.beforeResolve(async to => {
 <v-clicks>
 
 - Can modify the navigation
-  - [404 Not Found]{.font-mono}: store error
+  - [404 Not Found]{.font-mono}: display error
   - [403 Forbidden]{.font-mono}: Redirect to `/login`
 - Metrics/Analytics around navigation
 - Browser UI loading state
@@ -542,7 +529,7 @@ Since the
 
 ## Consistent partial updates
 
-In blocking Loaders: data updates after navigation
+In blocking loaders (the default): data updates after the navigation
 
 <v-click>
 
@@ -627,8 +614,8 @@ const {
 
 <div v-if="$clicks === 1">
 
-- Artwork Details is critical
-- Related artwork is not
+- Artwork details are critical
+- Related artworks are not
 
 </div>
 <div v-else-if="$clicks === 2">
@@ -638,7 +625,7 @@ Artwork `data` is always defined
 </div>
 <div v-else-if="$clicks === 3">
 
-Related Artists `data` will usually be `undefined`
+Related Artists `data` starts as `undefined`
 
 </div>
 
