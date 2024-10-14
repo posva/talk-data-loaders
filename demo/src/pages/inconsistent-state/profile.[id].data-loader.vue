@@ -1,15 +1,21 @@
 <script lang="ts">
 import { defineBasicLoader } from 'unplugin-vue-router/data-loaders/basic'
 import { getFollowerCount, getProfileInfo } from '@/api/fake-profile'
+import { ref } from 'vue'
+
+const isLazyProfileInfo = ref(false)
+const isLazyFollowerCount = ref(false)
 
 export const useProfileInfo = defineBasicLoader(
   '/inconsistent-state/profile.[id].data-loader',
   (to) => getProfileInfo(to.params.id),
+  { lazy: () => isLazyProfileInfo.value }
 )
 
 export const useFollowerCount = defineBasicLoader(
   '/inconsistent-state/profile.[id].data-loader',
   (to) => getFollowerCount(to.params.id),
+  { lazy: () => isLazyFollowerCount.value }
 )
 </script>
 
@@ -23,6 +29,16 @@ const { data: profileInfo, isLoading } = useProfileInfo()
 </script>
 
 <template>
+  <p>
+    <label>
+      <input type="checkbox" v-model="isLazyProfileInfo"> lazy load profile info
+    </label>
+    <br>
+    <label>
+      <input type="checkbox" v-model="isLazyFollowerCount"> lazy load follower count
+    </label>
+  </p>
+
   <main>
     <RouterLink
       :to="{

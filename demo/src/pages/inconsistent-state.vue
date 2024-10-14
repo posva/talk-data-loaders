@@ -25,6 +25,8 @@
     </li>
   </ul>
 
+  <p>Current URL: <code>{{ $route.fullPath }}</code></p>
+
   <hr>
 
   <RouterView />
