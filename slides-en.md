@@ -32,9 +32,20 @@ mdc: true
 
 <!--
 Hello everyone! I'm Eduardo, or posva on GitHub and Twitter. I'm the author of pinia, Vue Router, and other vue-related libraries like VueFire.
-I have been part of the core team for a very long time, 7 years, maybe more. During this journey I have encountered many different problems and I have tried to solve most of them.
-Except for one, Data Fetching. Data fetching can be very simple.
+I have been part of the core team for a very long time, I think it's 8 years now. During this journey I have encountered many different problems and I have tried to solve most of them.
+Except for one, Data Fetching.
 -->
+
+---
+layout: cover
+---
+
+# Data Fetching
+# 😈 😈 😈
+
+<!--
+It's not like Data Fetching is my nemesis or anything. But I've always felt like every project I've seen used a **completely** different abstraction. Probably because there was no standard way to do it. Let me show you the most common ones.
+ -->
 
 ---
 layout: two-cols
@@ -136,22 +147,23 @@ watch(() => route.params.id, async (id) => {
 
 </v-clicks>
 
-<!-- 
-If your application is Client-only, using a `watch` is a simple and effective way to fetch data.
-On top of that, it's easy to customize:
+<!--
+The most common one.
+If your application is Client-only, using a `watch` [click] is a simple and effective way to fetch data.
+
+On top of that, it's easy to customize: [click]
 
 - We can add loading state
-- Error handling
+- [click] Error handling
 
-This is because we are in the component itself, we can use the component data and we don't need to learn anything new in Vue.
+This is because we are in the component itself, [click] we can use the component data and we don't need to learn anything new in Vue.
 
-It has two major downsides:
+But [click], it has two major downsides:
 
 - It's quite verbose
-- It's client-only. You can't do SSR with this approach because the data fetching only happens when the component is mounted and is not awaited when rendering the page on the server
+- [click] It's client-only. You can't do SSR with this approach because the data fetching only happens when the component is mounted and is not awaited when rendering the page on the server
 
 For most projects, this is fine: they don't need SSR after all. But what if you do?
-
 -->
 
 ---
@@ -163,7 +175,7 @@ layout: two-cols
 
 <!-- ::right:: -->
 
-```vue{*|3-4}
+```vue{3-4}
 <script setup>
 const route = useRoute()
 // It's just await
@@ -183,10 +195,28 @@ const data = await fetchSomeData(route.params.id)
 
 ::right::
 
-<v-clicks depth=2>
+<v-clicks>
+
+👍
+
+</v-clicks>
+
+<v-clicks depth=2 at="+0">
 
 - Simple and intuitive
 - Works without the Router
+
+</v-clicks>
+
+<v-clicks>
+
+👎
+
+</v-clicks>
+
+<v-clicks depth=2 at="+0">
+
+
 - Depends on Mounting
   - Cascading fetching
   - No preloading
@@ -195,8 +225,19 @@ const data = await fetchSomeData(route.params.id)
 </v-clicks>
 
 <!--
-
 You can rely on `<Suspense>`
+
+- [click] It's simple and intuitive
+- [click] It works without the Router
+- [click] But it depends on mounting the component
+
+This might not seem like a big deal, but the downsides are
+
+- [click] Cascading fetching: any nested await will have to wait for the parent to finish fetching
+- [click] No preloading: we have no way to tell a component to prefetch the data and then mounting it without fetching again
+- [click] No watching (no automatic refetch): in order to refetch the data, we need to mount the component again. This is not always possible or desirable
+
+## other stuff
 
 - SSR we still need to serialize data to the client
 - With SSR, the page is rendered and the fetching is awaited on the server. Subsequent navigations are client-side only. The update of the URL and the navigation itself is not blocked by the fetching.
@@ -214,16 +255,14 @@ layout: two-cols
 
 ## Using a composable
 
-````md magic-move
-
-```vue{*|4-7}
+```vue{5-8}
 <script setup>
-import { useQuery } from '@tanstack/vue-query'
+import { useQuery } from '@pinia/colada'
 
 // Cache!
 const { status, data, error } = useQuery({
-  queryKey: ['some-key'],
-  queryFn: fetchSomeData,
+  key: ['some-key'],
+  query: fetchSomeData,
 })
 </script>
 
@@ -235,50 +274,28 @@ const { status, data, error } = useQuery({
   </div>
 </template>
 ```
-
-```vue{6,10-11}
-<script setup>
-import { useQuery } from '@tanstack/vue-query'
-import { onServerPrefetch } from 'vue'
-
-// Cache!
-const { status, data, error, suspense } = useQuery({
-  queryKey: ['some-key'],
-  queryFn: fetchSomeData,
-})
-// Handle SSR
-onServerPrefetch(() => suspense())
-</script>
-
-<template>
-  <div v-if="status === 'loading'">Loading...</div>
-  <div v-if="data">
-    <h1>{{ data.title }}</h1>
-    <p>{{ data.body }}</p>
-  </div>
-</template>
-```
-````
 
 ::right::
 
-<v-clicks depth=2>
+<v-clicks>
 
 - Feature rich
   - Cache
   - Deduplication
-  - Persistence
+  - Optimistic updates
+  - etc
 - Concise
 - Supports SSR
 
 </v-clicks>
 
-<!-- 
-- We can avoid suspense cascading
-- still not related from navigation
-- Heavy library. Could replace with pinia colada for most cases
+<!--
+Then we have composables like Pinia Colada, Vue Query, swrv, or even Nuxt's useFetch().
 
-And there are other approaches to Data Fetching in Vue, for example in Nuxt you have other more lightweight solutions. But it allows me to say 2 things
+- [click] It's feature rich. It comes with cache, request deduplication, optimistic updates, and more. The limit is your imagination
+- [click] It's concise. We only need to use the `useQuery` composable and we are good to go
+- [click] It usually supports SSR. For example, with Pinia Colada and Nuxt's data fetching methods, you don't need to do anything
+
 -->
 
 ---
@@ -306,13 +323,6 @@ router.beforeResolve(async to => {
 
 ::right::
 
-<v-clicks at="1">
-
-- Define a custom `meta` property
-- Consume it in a navigation guard
-
-</v-clicks>
-
 <v-clicks>
 
 - Can modify the navigation
@@ -325,6 +335,28 @@ router.beforeResolve(async to => {
 
 </v-clicks>
 
+<!--
+Last but not least, we have navigation guards. Implementation might vary but the general idea is this:
+
+- [click] Define a custom `meta` property
+- [click] Consume it in a navigation guard
+- Then you put the data somewhere, for example a pinia store
+
+[click] Because we are in a navigation guard, we have a major advantage compared to other solutions: we can modify the navigation. For example, if the data fetching fails, we can display a 404 Not Found page. If the user is not authenticated, we can redirect them to the login page.
+
+[click] Also, because we are integrating the data fetching within the navigation, we have more realistic metrics about slow navigations.
+
+[click] Lastly, we should be able in the near future to show a native loading state in the browser UI.
+
+But there are also downsides to this approach:
+
+- [click] We can't use component data
+- [click] We need a store to put the data
+
+These 4 examples allow me to say two things about data fetching:
+
+-->
+
 ---
 layout: cover
 class: text-center
@@ -332,9 +364,8 @@ class: text-center
 
 # Data Fetching is <span v-mark.underline.red="{ strokeWidth: 12 }">**Complex**</span>
 
-<!-- 
-Complex topic, lots of ways to handle. Almost every application needs it.
-TODO: add slide about questions
+<!--
+[click] It's a complex topic with many ways to **partially** handle it yet, almost every application needs it.
  -->
 
 ---
@@ -347,10 +378,10 @@ class: text-center
 # There is
 # <span v-mark.underline.red="{ strokeWidth: 12 }">no standard way</span>
 
-<!-- 
-
+<!--
+[click] And yet, there is no standard way to do it. Every project ends up settling on a different abstraction that works the best for them.
  -->
- 
+
 ---
 layout: cover
 class: text-center font-thin
@@ -364,6 +395,12 @@ class: text-center font-thin
 
 </v-clicks>
 
+<!--
+The main drawback of these solutions is the lack of collocation of data fetching logic with the page component while being navigation aware.
+
+[click] Is it even possible?
+-->
+
 ---
 layout: cover
 class: text-center
@@ -374,16 +411,16 @@ class: text-center
 ###### Standarizing Data Fetching
 
 <!--
-
+Today, I'm excited to introduce what I believe could become the future standard for data fetching in Vue: Data Loaders.
 -->
 
 ---
 
-## What are Data Loaders
+## Getting started
 
-A **Navigation Guard** in a Vue Plugin + `defineLoader()`
+Add the plugin to your Vue app. It will add a **navigation guard** to the router.
 
-```ts{*|2,6-8}
+```ts{2,6-8}
 import { createApp } from 'vue'
 import { DataLoaderPlugin } from 'unplugin-vue-router/data-loaders'
 import { router } from './router'
@@ -392,7 +429,13 @@ const app = createApp({})
 // Pass the Router instance and other optional
 // options to the plugin
 app.use(DataLoaderPlugin, { router })
+app.use(router)
+// ...
 ```
+
+<!--
+To get started, we need to add the `DataLoaderPlugin` to our Vue app. This plugin will add a navigation guard to the router that will handle the data fetching within a navigation.
+ -->
 
 ---
 layout: two-cols
@@ -413,7 +456,7 @@ export const useUserData = defineLoader(async (route) => {
 </script>
 
 <script lang="ts" setup>
-const { 
+const {
   data: user, // 👆 `user`
   isLoading, // true/false
   error,
@@ -455,7 +498,7 @@ Two `<script>`
 </div>
 <div v-else-if="$clicks === 7">
 
-`error` gives access to _expected_ errors. More about that later 👀
+`error` gives access to errors
 
 </div>
 <div v-else-if="$clicks === 8">
@@ -465,12 +508,24 @@ Two `<script>`
 </div>
 
 
+<!--
+Then we can start defining our data loaders with `defineLoader()`. This function is similar to `defineStore()`, it returns a composable that can be used in any component.
 
-<!-- 
-- [click] 2 scripts: disconnect load from mount
-- [click] Function access to the route. Everything
+[click] We have two `<script>` tags
+
+[click] we define the fetching within a function that receives the target location as an argument. This should allow us to fetch the data based on the URL. Which is a best practice. We return the data we want to expose.
+
+[click] As mentioned, `defineLoader()` returns a composable. We export it to let the router know about it. Then we can use it anywhere in our application. We are not limited to this page component.
+
+[click] This gives access to a few properties:
+
+- [click] starting with `data`, which is the returned value from the loader
+- [click] `isLoading` is set to true while the loader is pending
+- [click] `error` gives access to promise rejections. We will see this in more detail later
+- [click] `reload` allows you to manually refresh the data **without a navigation**
+
  -->
- 
+
 ---
 
 ## Navigation Aware
@@ -521,28 +576,60 @@ Navigation Aware is not just _blocking the navigation_.
 
 </v-clicks>
 
-<!-- 
-Since the
+<!--
+Since we are "Navigation Aware" because we are within a navigation guard, we can control the navigation outcome. If the loader throws an error, the navigation is canceled.
+
+[click] Differently from regular navigation guards, we cannot just return `false` or a new location to redirect. We need to wrap it with `NavigationResult()` and we can either throw it or return it.
+
+[click] But that's not it. Being _Navigation Aware_ is not just about controlling the navigation. And this is where things get really interesting for data loaders.
  -->
- 
+
 ---
 
 ## Consistent partial updates
 
-In blocking loaders (the default): data updates after the navigation
+In loaders, by default, data updates **after** the navigation because they **block** the navigation
 
-<v-click>
+No need to write partial loading states 🎉
 
-Lazy loaders _immediately_ update since they are not navigation aware.
+<!--
+It's also about consistency. In loaders, by default, the data updates only once all of the loaders have properly resolved. Your UI won't display an old page with new data.
 
-</v-click>
+We can also avoid writing code to display loading messages or small spinners.
+
+Let me show you with a demo.
+ -->
 
 ---
 layout: demo-iframe
 url: /inconsistent-state
 ---
 
-## Non blocking "lazy" loaders
+<!--
+Let's first see the basic client-side data fetching.
+
+This demo is using watchers based on the route params to fetch the data.
+
+We have two fetches, the profile information takes about 500ms while the follower count takes 2 seconds.
+
+With client side fetching, we end up with inconsistent states.
+
+The URL changes immediately, the profile information changes very quickly but the follower count is wrong for over a second. Not ideal.
+
+Let's see the data loaders version. The first thing we noticed is that little blue loading bar at the top.
+
+The navigation is blocked until the data is ready and that loading bar helps the user understand something is loading.
+
+When we switch between profiles, the data is always there and consistent thanks to the navigation blocking.
+
+But we don't always want to block the navigation. That's why we have lazy loaders.
+
+- lazy but still consistent
+ -->
+
+---
+
+## _Lazy_ loaders
 
 ````md magic-move
 ```vue{2-7}
@@ -558,7 +645,7 @@ const { data: user, isLoading, error, reload } = useUserData()
 </script>
 ```
 
-```vue{7-9}
+```vue{5-7}
 <script lang="ts">
 export const useUserData = defineLoader(async (route) => {
   const user = await getUserById(route.params.id)
@@ -579,9 +666,32 @@ const { data: user, isLoading, error, reload } = useUserData()
 - It's triggered during navigation but not awaited
 - Cannot control the navigation
 - Any thrown error will appear in `error`
+- Still consistent updates ✨
 
 </v-clicks>
 
+<!--
+Perfect for non-critical data
+
+Let's see it in action
+ -->
+
+---
+layout: demo-iframe
+url: /inconsistent-state/profile/posva/data-loader
+---
+
+<!--
+Same demo as before, but we are going to make the follower count lazy. So it's not blocking the navigation. We get a similar result to the client-side fetching.
+
+In this scenario we would use the `isLoading` state to show a loading spinner while the follower count is being fetched.
+
+What's interesting is that if we make the profile information lazy, we get the same consistent behavior. Even though it doesn't block the navigation anymore, because it finishes because the navigation is over, it still waits before setting the data. Let me show you.
+
+It's great not to have to worry some fetches being too fast but it's usually the slow ones that are the problem.
+
+Let's talk about why do we want to use lazy loaders.
+ -->
 
 ---
 layout: two-cols
@@ -589,7 +699,7 @@ layout: two-cols
 
 ## Why "lazy" loaders
 
-```vue{*|2-4,6-9|13|15}
+```vue{*|2-4,6-9|13|15|*}
 <script lang="ts">
 export const useArtworkDetails = defineLoader(
  (to) => getArtwork(to.params.id),
@@ -629,6 +739,22 @@ Related Artists `data` starts as `undefined`
 
 </div>
 
+<!--
+Lazy loaders are more about non-critical data. [click] In this example we have two loaders:
+`useArtworkDetails` and `useArtworkRelatedArtists`. The first one is the critical data, it's what the user is looking for. The second one is not as important, so it's better if we show the page as soon as the main data is ready.
+
+This has a few implications: [click]
+
+- Artwork details are always defined, no need to write `v-if` checks
+- [click] On the other hand, related Artists data starts as `undefined` and their type reflects that
+
+[click] This is a practical way to distinguish between critical and non-critical data. It enhances the user experience by prioritizing the data that the user needs most.
+
+It brings another topic: Error Management
+
+Since lazy loaders don't block the navigation, any error thrown will appear in `error`. This gives us the granularity to handle the error locally.
+ -->
+
 ---
 
 ## Error Management
@@ -642,7 +768,7 @@ export const useArtworkDetails = defineLoader(
  {
   // MyCustomError instances will appear in `error`
   // without blocking the navigation
-  errors: { MyCustomError }
+  errors: [MyCustomError]
  }
 )
 </script>
@@ -652,17 +778,21 @@ const { data: artwork, status, error } = useArtworkDetails()
 </script>
 ```
 
-<v-clicks>
+<!--
+But lazy loaders abort the navigation if an error is thrown.
 
-Handle the error locally
+[click] But we can still define expected errors in the `error` option. This way, the navigation isn't aborted only if the error is expected.
 
-</v-clicks>
+[click] It will also appear in `error` so it can be handled granularly. So we have the best of both worlds: we can handle errors globally with `router.onError()` and also locally in the component.
+
+Alright, so we have code collocation, navigation awareness, consistent updates, deduplication, lazy loading, and error management.
+ -->
 
 ---
 
 ## What about extra features?
 
-Cache, persistance, ???
+Cache, optimistic updates, ???
 
 ````md magic-move
 ```vue{*|2}
@@ -696,7 +826,7 @@ const { data: artwork, status, error } = useArtworkDetails()
 import { defineColadaLoader } from 'unplugin-vue-router/data-loaders/colada'
 
 export const useArtworkDetails = defineColadaLoader({
-  key: (to) => ['artwork', to.params.id], // Specific to Pinia
+  key: (to) => ['artwork', to.params.id], // Specific to Pinia Colada
   query: (to) => getArtwork(to.params.id),
 })
 </script>
@@ -734,7 +864,7 @@ export const useArtworkDetails = defineColadaLoader({
 </script>
 
 <script lang="ts" setup>
-const { 
+const {
   data: artwork,
   status,
   error,
@@ -743,6 +873,24 @@ const {
 </script>
 ```
 ````
+
+<!--
+But what about things like cache, optimistic updates? Everything that was mentioned for composables?
+
+I have a small confession to make. [click] There is no `defineLoader()`.
+
+[click] What I have been explaining so far is called `defineBasicLoader()`.
+
+[click] It represents the baseline implementation for Data Loaders. Just a function. It cannot get simpler than that.
+
+[click] Data Loaders can also be integrated with other libraries for more advanced features. For example, with Pinia Colada. Colada loaders take an object with more options. But they are augmented with Data Loader features.
+
+[click] The `key`, a required parameter, has the route location as an argument. Allowing to easily cache the data based on the URL.
+
+[click] We can add a `staleTime` option to keep the data fresh for a certain amount of time. This is a feature of Pinia Colada.
+
+[click] And we can also augment the composable. For example, the colada loader exposes a `refresh()` method that refetches the data only if needed based on that `staleTime`.
+-->
 
 ---
 
@@ -793,9 +941,7 @@ layout: two-cols
 
 Async State management layer for Pinia
 
-Cache, cache invalidation, deduplication, plugins, ...
-
-**Still work in progress**
+Cache, optimistic updates, deduplication, plugins, ...
 
 - <carbon-logo-github /> [posva/pinia-colada]{.font-mono}
 - 📚 [https://pinia-colada.esm.dev](https://pinia-colada.esm.dev/)
@@ -836,20 +982,33 @@ layout: cover
 # Links
 
 - [<logos-vue /> unplugin-vue-router](https://github.com/posva/unplugin-vue-router)
-- [Data Loaders RFC](https://uvr.esm.is/rfcs/data-loaders/)
+- [Data Loaders](https://uvr.esm.is/data-loaders/)
 - [🍹 Pinia Colada](https://github.com/posva/pinia-colada)
 - [Slides + demo <carbon-logo-github /><span class="font-mono">posva/data-loaders</span>](https://github.com/posva/data-loaders)
 - [❤️ Sponsor me](https://esm.dev/open-source)
+
+<style>
+  ul {
+    list-style-type: none;
+    padding: 0;
+  }
+</style>
+
 
 ---
 
 TODO: Mastering Pinia Course
 
-<!-- 
+<!--
 
  -->
 
 ---
+layout: cover
+---
+
+# Thanks!
+
 
 <!--
 - Show project index, it shows artwork
@@ -895,18 +1054,3 @@ TODO: Mastering Pinia Course
     - any library could implement their own loader
     - the colada loader has much more like only triggering if used params and query change
  -->
-
-
-<style>
-  ul {
-    list-style-type: none;
-    padding: 0;
-  }
-</style>
-
-
----
-layout: cover
----
-
-# Thanks!
