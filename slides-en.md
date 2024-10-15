@@ -898,7 +898,7 @@ I have a small confession to make. [click] There is no `defineLoader()`.
 
 Existing:
 
-- Bare minimum implementation: `defineBasicLoader()`
+- Baseline implementation: `defineBasicLoader()`
 - Pinia Colada integration: `defineColadaLoader()`
 
 <v-click>
@@ -912,6 +912,15 @@ Potential future implementations:
 
 </v-click>
 
+<!--
+`defineLoader()` is actually a spec. We currently have two implementations:
+
+- A simple one for basic data fetching
+- A feature rich one for more advanced apps
+
+[click] But we can imagine many more implementations in the future. For example, a loader for Vue Query, one for Websockets, GraphQL, or even Firebase.
+ -->
+
 ---
 layout: cover
 ---
@@ -919,6 +928,10 @@ layout: cover
 # Piña Colada?
 
 <img src="/pina-colada.jpeg" class="mx-auto max-h-96">
+
+<!--
+I have been mentioning this "Pinia Colada" thing a few times but I haven't explained what it is. I'm not talking about a cocktail.
+ -->
 
 ---
 layout: cover
@@ -928,6 +941,10 @@ transition: view-transition
 # [Pinia Colada]{.inline-block.view-transition-title}
 
 <img src="/pinia-colada.png" class="mx-auto max-h-96 view-transition-image">
+
+<!--
+I'm talking about a library I have been working on for the past year.
+ -->
 
 ---
 layout: two-cols
@@ -946,10 +963,11 @@ Cache, optimistic updates, deduplication, plugins, ...
 - <carbon-logo-github /> [posva/pinia-colada]{.font-mono}
 - 📚 [https://pinia-colada.esm.dev](https://pinia-colada.esm.dev/)
 
----
-layout: iframe
-url: https://uvr.esm.is/data-loaders/
----
+<!--
+Pinia colada is a library built on top of Pinia stores to make async state management a breeze. It works on itself, without the Data Loaders or even the router.
+
+It's the perfect companion for optimal data loaders. Let me know if you have given a try.
+ -->
 
 ---
 
@@ -970,9 +988,10 @@ Goals:
   - All data is updated at once
 
 <!--
-- Delay data updates until **all data loaders resolve**
-- Rollback if any fails
-- Avoid displaying an old page with new data
+Let's summarize Data Loaders. They are designed to be navigation aware, collocated with page components, and performant.
+The provide a flexible API to handle the loading state, errors and data both globally and locally. They are designed to create a consistent user experience by delaying data updates.
+
+Please, give it a try and let me know what you think as well.
  -->
 
 ---
@@ -994,6 +1013,9 @@ layout: cover
   }
 </style>
 
+<!--
+The slides and demos are available on GitHub. Check out the links in this slide for more information.
+ -->
 
 ---
 layout: image
@@ -1002,7 +1024,8 @@ backgroundSize: contain
 ---
 
 <!--
-
+And last but not least, if you are looking to improve your Vue.js skills with advanced exercises, or just want to support my work, check out my Mastering Pinia course on masteringpinia.com
+I brought some Pinia pins with me. If you bought the course, come show me and I'll give you one.
  -->
 
 ---
@@ -1011,48 +1034,6 @@ layout: cover
 
 # Thanks!
 
-
 <!--
-- Show project index, it shows artwork
-- Install uvr
-- add to vite config (for pages and types but not needed for data loading itself)
-- add plugins to main.ts
-- index.vue
-  - migrate to defineBasicLoader
-  - add script
-  - set the page to 1
-  - export and explain what it does
-  - refactor setup to use it
-  - pass the page from params
-- search.vue
-  - not fully working
-  - add basic loader that search artworks
-  - parse query page and text
-  - explain that if invalid we can throw a navigation result or return to control the navigation
-  - show redirect to page 1
-  - Add full res images
-    - extra fetch that depends on the first one
-    - add new loader
-    - await the first loader
-    - explain this is different from below
-    - data is consistent
-    - await getArtworkImagesURLs (needs to map the data to their ids)
-    - use a map to host the artworks based on their id
-    - return it
-  - How not to wait for the full res images
-    - set the loader to lazy
-    - show the network panel
-    - this is sequential loading
-    - show server: false
-  - Alright but pretty slow when coming back to a visited page. cache data?
-  - pinia colada: fetching layer
-  - integrate well with data loaders
-  - migrate index loader to pinia colada
-  - show how good it is
-  - explain staleTime and show
-  - do the same for search
-  - explain the data loader is implemented by using pinia colada, outside of pinia colada
-    - this is the big advantage of loaders, they are mainly a spec to be followed
-    - any library could implement their own loader
-    - the colada loader has much more like only triggering if used params and query change
+Thank you!
  -->
