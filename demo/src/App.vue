@@ -13,7 +13,10 @@ const areSettingsOpen = useLocalStorage('settings-open', true)
     <NavBar />
   </header>
 
-  <details :open="areSettingsOpen" @toggle="areSettingsOpen = ($event.target as HTMLDetailsElement).open">
+  <details
+    :open="areSettingsOpen"
+    @toggle="areSettingsOpen = ($event.target as HTMLDetailsElement).open"
+  >
     <summary>Connection settings</summary>
 
     <div>
