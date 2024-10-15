@@ -996,8 +996,10 @@ layout: cover
 
 
 ---
-
-TODO: Mastering Pinia Course
+layout: image
+image: /mp-social.png
+backgroundSize: contain
+---
 
 <!--
 
