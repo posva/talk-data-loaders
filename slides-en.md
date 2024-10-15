@@ -1003,7 +1003,7 @@ layout: cover
 - [<logos-vue /> unplugin-vue-router](https://github.com/posva/unplugin-vue-router)
 - [Data Loaders](https://uvr.esm.is/data-loaders/)
 - [🍹 Pinia Colada](https://github.com/posva/pinia-colada)
-- [Slides + demo <carbon-logo-github /><span class="font-mono">posva/data-loaders</span>](https://github.com/posva/data-loaders)
+- [Slides + demo <carbon-logo-github /><span class="font-mono">posva/talk-data-loaders</span>](https://github.com/posva/talk-data-loaders)
 - [❤️ Sponsor me](https://esm.dev/open-source)
 
 <style>
