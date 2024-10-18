@@ -98,7 +98,7 @@ watch(() => route.params.id, async (id) => {
 </template>
 ```
 
-```vue{7,11-18|5-19|8,9}
+```vue{7,11-18|5-19}
 <script setup lang="ts">
 import { ref, onMounted } from 'vue'
 import { useRoute } from 'vue-router'
@@ -160,8 +160,8 @@ This is because we are in the component itself, [click] we can use the component
 
 But [click], it has two major downsides:
 
-- It's quite verbose
-- [click] It's client-only. You can't do SSR with this approach because the data fetching only happens when the component is mounted and is not awaited when rendering the page on the server
+- It's client-only. You can't do SSR with this approach because the data fetching only happens when the component is mounted and is not awaited when rendering the page on the server
+- [click] It's quite verbose
 
 For most projects, this is fine: they don't need SSR after all. But what if you do?
 -->
@@ -237,17 +237,7 @@ This might not seem like a big deal, but the downsides are
 - [click] No preloading: we have no way to tell a component to prefetch the data and then mounting it without fetching again
 - [click] No watching (no automatic refetch): in order to refetch the data, we need to mount the component again. This is not always possible or desirable
 
-## other stuff
-
-- SSR we still need to serialize data to the client
-- With SSR, the page is rendered and the fetching is awaited on the server. Subsequent navigations are client-side only. The update of the URL and the navigation itself is not blocked by the fetching.
-- Error/loading state only on parent component
-- the fetching happens when mounting the component
-- Nested comp that fetches, starts fetching after the parent has fetched. No parallel fetching, slower applications
-- No way to only fetch the data. We need to mount
-- Can't update without mounting again or adding extra code to handle the update
-- still not integrated in the navigation cycle
--->
+ -->
 
 ---
 layout: two-cols
@@ -342,7 +332,7 @@ Last but not least, we have navigation guards. Implementation might vary but the
 - [click] Consume it in a navigation guard
 - Then you put the data somewhere, for example a pinia store
 
-[click] Because we are in a navigation guard, we have a major advantage compared to other solutions: we can modify the navigation. For example, if the data fetching fails, we can display a 404 Not Found page. If the user is not authenticated, we can redirect them to the login page.
+[click] Because we are in a navigation guard, we have a major advantage compared to other solutions: we can modify the navigation. For example, we can redirect to a 404 Not Found page. If the user is not authenticated, we can redirect them to the login page.
 
 [click] Also, because we are integrating the data fetching within the navigation, we have more realistic metrics about slow navigations.
 
