@@ -3,6 +3,7 @@
 - [Playground Demo](https://data-loaders-demo.netlify.app)
 - [Slides](https://data-loaders.netlify.app/)
 - [简体中文 Slides](https://data-loaders.netlify.app/zh/)
+- [日本語 Slides](https://data-loaders.netlify.app/jp/)
 
 ## Commands
 
