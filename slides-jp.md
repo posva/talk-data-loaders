@@ -177,7 +177,8 @@ layout: two-cols
 ```vue{3-4}
 <script setup>
 const route = useRoute()
-// It's just await
+```vue
+// ただの await です
 const data = await fetchSomeData(route.params.id)
 </script>
 
@@ -186,7 +187,7 @@ const data = await fetchSomeData(route.params.id)
     <h1>{{ data.title }}</h1>
     <p>{{ data.body }}</p>
 
-    <!-- I also fetch data -->
+    <!-- これもデータをフェッチします -->
     <NestedComponentThatAlsoFetches />
   </div>
 </template>
@@ -299,13 +300,13 @@ const router = createRouter({
   routes: [{
     path: '/artwork/:id',
     component: () => import('@/pages/ArtworkDetail.vue'),
-    // Define fetch logic in `meta`
+    // フェッチロジックを `meta` に定義
     meta: { data: (to) => getArtwork(to.params.id) },
   }],
 })
 
 router.beforeResolve(async to => {
-  // Fetch and await
+  // フェッチして待機
   await to.meta.data?.(to)
 })
 ```
