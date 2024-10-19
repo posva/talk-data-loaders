@@ -127,6 +127,7 @@ watch(() => route.params.id, async (id) => {
   </div>
 </template>
 ```
+
 ````
 
 ::right::
@@ -177,7 +178,6 @@ layout: two-cols
 ```vue{3-4}
 <script setup>
 const route = useRoute()
-```vue
 // ただの await です
 const data = await fetchSomeData(route.params.id)
 </script>
@@ -223,6 +223,7 @@ const data = await fetchSomeData(route.params.id)
   - watch なし（自動に再フェッチなし）
 
 </v-clicks>
+
 
 <!--
 You can rely on `<Suspense>`
