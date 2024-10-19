@@ -21,6 +21,16 @@ status = 200
 to = "/zh/index.html"
 
 [[redirects]]
+from = "/jp"
+status = 200
+to = "/jp/index.html"
+
+[[redirects]]
+from = "/jp/*"
+status = 200
+to = "/jp/index.html"
+
+[[redirects]]
 from = "/*"
 status = 200
 to = "/index.html"
