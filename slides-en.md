@@ -661,9 +661,15 @@ const { data: user, isLoading, error, reload } = useUserData()
 </v-clicks>
 
 <!--
-Perfect for non-critical data
+Perfect for non-critical data. We just need [click] to set `lazy: true`. Lazy are still conveniently integrated with data loaders:
 
-Let's see it in action
+- [click] A lazy loader is still triggered on each navigation but not awaited
+- [click] Since it's not awaited, it cannot change the navigation
+- [click] Any thrown error appears in `error` instead of aborting the navigation
+- But, and this is the best part, [click] it's still follow consistent updates
+
+Let me show you
+
  -->
 
 ---

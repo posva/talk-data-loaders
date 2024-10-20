@@ -660,10 +660,17 @@ const { data: user, isLoading, error, reload } = useUserData()
 
 </v-clicks>
 
-<!--
-Perfect for non-critical data
 
-Let's see it in action
+<!--
+Perfect for non-critical data. We just need [click] to set `lazy: true`. Lazy are still conveniently integrated with data loaders:
+
+- [click] A lazy loader is still triggered on each navigation but not awaited
+- [click] Since it's not awaited, it cannot change the navigation
+- [click] Any thrown error appears in `error` instead of aborting the navigation
+- But, and this is the best part, [click] it's still follow consistent updates
+
+Let me show you
+
  -->
 
 ---
@@ -769,9 +776,9 @@ const { data: artwork, status, error } = useArtworkDetails()
 ```
 
 <!--
-But lazy loaders abort the navigation if an error is thrown.
+But what about non lazy loaders
 
-[click] But we can still define expected errors in the `error` option. This way, the navigation isn't aborted only if the error is expected.
+[click] But we can still define expected errors in the `error` option. This way, the navigation still happens if the error is expected.
 
 [click] It will also appear in `error` so it can be handled granularly. So we have the best of both worlds: we can handle errors globally with `router.onError()` and also locally in the component.
 
