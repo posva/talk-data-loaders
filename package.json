@@ -5,7 +5,8 @@
   "private": true,
   "scripts": {
     "build": "./build.sh",
-    "dev": "slidev --open slides-en.md"
+    "dev": "slidev --open slides-en.md",
+    "play": "pnpm run -C demo dev"
   },
   "dependencies": {
     "@pinia/colada": "latest",
