@@ -501,7 +501,7 @@ Then we can start defining our data loaders with `defineLoader()`. This function
 
 [click] we define the fetching within a function that receives the target location as an argument. This should allow us to fetch the data based on the URL. Which is a best practice. We return the data we want to expose.
 
-[click] As mentioned, `defineLoader()` returns a composable. We export it to let the router know about it. Then we can use it anywhere in our application. We are not limited to this page component.
+[click] As mentioned, `defineLoader()` returns a composable. We export it to let the router know about it. Then we can use it anywhere in our application. We are not limited to this page component. And they are still executed only once, even if we export it from multiple page components.
 
 [click] This gives access to a few properties:
 
@@ -771,7 +771,7 @@ const { data: artwork, status, error } = useArtworkDetails()
 ```
 
 <!--
-But lazy loaders abort the navigation if an error is thrown.
+But non-lazy loaders abort the navigation if an error is thrown.
 
 [click] But we can still define expected errors in the `error` option. This way, the navigation isn't aborted only if the error is expected.
 
@@ -956,7 +956,7 @@ Cache, optimistic updates, deduplication, plugins, ...
 - 📚 [https://pinia-colada.esm.dev](https://pinia-colada.esm.dev/)
 
 <!--
-Pinia colada is a library built on top of Pinia stores to make async state management a breeze. It works on itself, without the Data Loaders or even the router.
+Pinia colada is a library built on top of Pinia stores to make async state management a breeze. It works by itself, without the Data Loaders or even the router. I left a couple of stickers around.
 
 It's the perfect companion for optimal data loaders. Let me know if you have given a try.
  -->
@@ -983,7 +983,7 @@ Goals:
 Let's summarize Data Loaders. They are designed to be navigation aware, collocated with page components, and performant.
 The provide a flexible API to handle the loading state, errors and data both globally and locally. They are designed to create a consistent user experience by delaying data updates.
 
-Please, give it a try and let me know what you think as well.
+Please, give it a try and let me know what you think.
  -->
 
 ---
