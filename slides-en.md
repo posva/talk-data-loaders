@@ -136,7 +136,6 @@ watch(() => route.params.id, async (id) => {
 - Simple
 - Customizable
 
-
 </v-clicks>
 
 <v-clicks at="+3">
@@ -171,7 +170,6 @@ layout: two-cols
 ---
 
 ## Suspense
-
 
 <!-- ::right:: -->
 
@@ -215,7 +213,6 @@ const data = await fetchSomeData(route.params.id)
 </v-clicks>
 
 <v-clicks depth=2 at="+0">
-
 
 - Depends on Mounting
   - Cascading fetching
@@ -496,7 +493,6 @@ Two `<script>`
 `reload` allows you to manually refresh the data without a navigation
 
 </div>
-
 
 <!--
 Then we can start defining our data loaders with `defineLoader()`. This function is similar to `defineStore()`, it returns a composable that can be used in any component.
