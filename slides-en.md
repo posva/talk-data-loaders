@@ -31,8 +31,13 @@ mdc: true
 </div>
 
 <!--
-Hello everyone! I'm Eduardo, or posva on GitHub and Twitter. I'm the author of pinia, Vue Router, and other vue-related libraries like VueFire.
-I have been part of the core team for a very long time, I think it's 8 years now. During this journey I have encountered many different problems and I have tried to solve most of them.
+Hello everyone! I'm Eduardo, or posva on GitHub and Twitter.
+
+I'm the author of pinia, Vue Router, and other vue-related libraries like VueFire.
+
+I have been part of the core team for a very long time, I think it's 8 years now.
+
+During this journey I have encountered many different problems and I have tried to solve most of them.
 Except for one, Data Fetching.
 -->
 
@@ -962,6 +967,16 @@ It's the perfect companion for optimal data loaders. Let me know if you have giv
  -->
 
 ---
+layout: demo-iframe
+url: /data-loaders/art-gallery/search
+---
+
+<!--
+- Connected to route
+- Navigating back to old pages is nearly instant
+-->
+
+---
 
 # Data Loaders
 
@@ -1016,6 +1031,8 @@ backgroundSize: contain
 ---
 
 <!--
+And last but not least, Pinia Colada started as an exercise for Mastering Pinia. So if you are curious about learning how it works internally and learning much more about state management in Vue. Give my course a try.
+
 And last but not least, if you are looking to improve your Vue.js skills with advanced exercises, or just want to support my work, check out my Mastering Pinia course on masteringpinia.com
 I brought some Pinia pins with me. If you bought the course, come show me and I'll give you one.
  -->
